@@ -1,5 +1,5 @@
 const GRAVITY_FORCE = 2000;
-const MOVE_SPEED = 5;
+const MOVE_SPEED = 250;
 const JUMP_FORCE = 800;
 const COLLISION_WIDTH = 40;
 const COLLISION_HEIGHT = 76;
@@ -21,11 +21,15 @@ export class PlayerSprite extends Phaser.Physics.Arcade.Sprite {
   }
 
   public moveLeft(): void {
-    this.x -= this.moveSpeed;
+    this.setVelocityX(-this.moveSpeed);
   }
 
   public moveRight(): void {
-    this.x += this.moveSpeed;
+    this.setVelocityX(this.moveSpeed);
+  }
+
+  public stop() {
+    this.setVelocityX(0);
   }
 
   public jump(): void {
