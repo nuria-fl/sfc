@@ -1,8 +1,8 @@
 import { PlayerSprite } from "../sprites/player.sprite";
 import pages from "../text";
 
-const PLAYER_INITIAL_X = 415;
-const PLAYER_INITIAL_Y = 100;
+const PLAYER_INITIAL_X = 270;
+const PLAYER_INITIAL_Y = 50;
 
 class TestScene extends Phaser.Scene {
   public platforms: Phaser.Physics.Arcade.StaticGroup;
