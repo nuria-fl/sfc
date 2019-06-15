@@ -1,15 +1,19 @@
 import { PlayerSprite } from "../sprites/player.sprite";
 import pages from "../text";
 
+const PLAYER_INITIAL_X = 270;
+const PLAYER_INITIAL_Y = 50;
+
 class TestScene extends Phaser.Scene {
   public platforms: Phaser.Physics.Arcade.StaticGroup;
+  public respawnPlatforms: Phaser.Physics.Arcade.StaticGroup;
   private player: PlayerSprite;
   private cursors: Phaser.Input.Keyboard.CursorKeys;
   private pageBorder: Phaser.Physics.Arcade.Image;
 
   constructor() {
     super({
-      key: "TestScene"
+      key: "TestScene",
     });
   }
 
@@ -21,29 +25,40 @@ class TestScene extends Phaser.Scene {
 
   public create() {
     this.platforms = this.physics.add.staticGroup();
+    this.respawnPlatforms = this.physics.add.staticGroup();
 
     let pageOffset = 0;
 
-    pages.forEach(page => {
+    pages.forEach((page) => {
       let lineY = 100;
-      page.forEach(line => {
+      page.forEach((line) => {
         const currentLine = line.split(" ");
         let wordX = 100;
 
-        currentLine.forEach(word => {
+        currentLine.forEach((word) => {
           const currentWord = this.add.text(wordX + pageOffset, lineY, word, {
             fontFamily: "Amatic SC",
             fontSize: 100,
-            color: "#333"
+            color: "#333",
           });
 
           const bounds = currentWord.getBounds();
 
-          this.platforms
-            .create(bounds.x + 5, bounds.y + 10 + 10, "floor")
-            .setOrigin(0, 0)
-            .setScale(bounds.width - 10, bounds.height - 40)
-            .refreshBody();
+          if (word === "wolf") {
+            const platform = this.respawnPlatforms
+              .create(bounds.x + 5, bounds.y + 10 + 10, "floor")
+              .setOrigin(0, 0)
+              .setScale(bounds.width - 10, bounds.height - 40)
+              .refreshBody();
+
+            platform.currentWord = currentWord;
+          } else {
+            this.platforms
+              .create(bounds.x + 5, bounds.y + 10 + 10, "floor")
+              .setOrigin(0, 0)
+              .setScale(bounds.width - 10, bounds.height - 40)
+              .refreshBody();
+          }
 
           wordX += bounds.width + 50;
         });
@@ -52,19 +67,39 @@ class TestScene extends Phaser.Scene {
       pageOffset += 1800;
     });
 
-    this.cursors = this.input.keyboard.createCursorKeys();
     this.platforms.toggleVisible();
+    this.respawnPlatforms.toggleVisible();
+
+    this.cursors = this.input.keyboard.createCursorKeys();
 
     this.pageBorder = this.physics.add
       .staticImage(1650, 10, "pageLimit")
       .setScale(1, 2)
       .refreshBody();
 
-    this.player = new PlayerSprite(this, 100, 50, "player");
+    this.player = new PlayerSprite(
+      this,
+      PLAYER_INITIAL_X,
+      PLAYER_INITIAL_Y,
+      "player",
+    );
+
     this.physics.add.collider(this.player, this.platforms);
     this.physics.add.collider(this.player, this.pageBorder);
+    this.physics.add.collider(
+      this.player,
+      this.respawnPlatforms,
+      (_, wolfPlatform: Phaser.Physics.Arcade.Sprite) => {
+        const { top } = wolfPlatform.body;
+        const { x } = wolfPlatform.getCenter();
+        this.player.setRespawnPosition(x, top - this.player.height / 2);
+        ((wolfPlatform as any).currentWord as Phaser.GameObjects.Text).setColor(
+          "#f00",
+        );
+      },
+    );
 
-    this.cameras.main.setBounds(0, 0, 2000, 2000);
+    this.cameras.main.setBounds(0, 0, 2000, 3000);
     this.cameras.main.startFollow(this.player, false);
   }
 
@@ -78,6 +113,9 @@ class TestScene extends Phaser.Scene {
     }
     if (this.cursors.space.isDown && this.player.canJump()) {
       this.player.jump();
+    }
+    if (this.player.isOutsideCamera(this.cameras.main)) {
+      this.player.respawn();
     }
   }
 }

@@ -12,7 +12,7 @@ export default [
     "would come down the chimney and",
     "eat up the little pig for his supper.",
     "",
-    "But while he was climbing on to the"
+    "But while he was climbing on to the",
   ],
   [
     "roof the little pig prepared a big pot full of",
@@ -26,6 +26,6 @@ export default [
     "",
     "So the little piggy put on the cover again,",
     "and boiled the wolf up, and the three little",
-    "pigs ate him for supper."
-  ]
+    "pigs ate him for supper.",
+  ],
 ];
