@@ -6,6 +6,7 @@ const PLAYER_INITIAL_Y = 100;
 
 class TestScene extends Phaser.Scene {
   public platforms: Phaser.Physics.Arcade.StaticGroup;
+  public wolfPlatforms: Phaser.Physics.Arcade.StaticGroup;
   private player: PlayerSprite;
   private cursors: Phaser.Input.Keyboard.CursorKeys;
   private pageBorder: Phaser.Physics.Arcade.Image;
@@ -24,6 +25,7 @@ class TestScene extends Phaser.Scene {
 
   public create() {
     this.platforms = this.physics.add.staticGroup();
+    this.wolfPlatforms = this.physics.add.staticGroup();
 
     let pageOffset = 0;
 
@@ -42,11 +44,21 @@ class TestScene extends Phaser.Scene {
 
           const bounds = currentWord.getBounds();
 
-          this.platforms
-            .create(bounds.x + 5, bounds.y + 10 + 10, "floor")
-            .setOrigin(0, 0)
-            .setScale(bounds.width - 10, bounds.height - 40)
-            .refreshBody();
+          if (word === "wolf") {
+            const platform = this.wolfPlatforms
+              .create(bounds.x + 5, bounds.y + 10 + 10, "floor")
+              .setOrigin(0, 0)
+              .setScale(bounds.width - 10, bounds.height - 40)
+              .refreshBody();
+
+            platform.currentWord = currentWord;
+          } else {
+            this.platforms
+              .create(bounds.x + 5, bounds.y + 10 + 10, "floor")
+              .setOrigin(0, 0)
+              .setScale(bounds.width - 10, bounds.height - 40)
+              .refreshBody();
+          }
 
           wordX += bounds.width + 50;
         });
@@ -55,8 +67,10 @@ class TestScene extends Phaser.Scene {
       pageOffset += 1800;
     });
 
-    this.cursors = this.input.keyboard.createCursorKeys();
     this.platforms.toggleVisible();
+    this.wolfPlatforms.toggleVisible();
+
+    this.cursors = this.input.keyboard.createCursorKeys();
 
     this.pageBorder = this.physics.add
       .staticImage(1650, 10, "pageLimit")
@@ -69,10 +83,23 @@ class TestScene extends Phaser.Scene {
       PLAYER_INITIAL_Y,
       "player",
     );
+
     this.physics.add.collider(this.player, this.platforms);
     this.physics.add.collider(this.player, this.pageBorder);
+    this.physics.add.collider(
+      this.player,
+      this.wolfPlatforms,
+      (_, wolfPlatform: Phaser.Physics.Arcade.Sprite) => {
+        const { top } = wolfPlatform.body;
+        const { x } = wolfPlatform.getCenter();
+        this.player.setRespawnPosition(x, top - this.player.height / 2);
+        ((wolfPlatform as any).currentWord as Phaser.GameObjects.Text).setColor(
+          "#f00",
+        );
+      },
+    );
 
-    this.cameras.main.setBounds(0, 0, 2000, 2000);
+    this.cameras.main.setBounds(0, 0, 2000, 3000);
     this.cameras.main.startFollow(this.player, false);
   }
 

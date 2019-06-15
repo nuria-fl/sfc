@@ -23,8 +23,8 @@ export class PlayerSprite extends Phaser.Physics.Arcade.Sprite {
       COLLISION_WIDTH,
       COLLISION_HEIGHT,
     );
-    this.respawnX = x;
-    this.respawnY = y;
+    this.body.setSize(COLLISION_WIDTH, COLLISION_HEIGHT);
+    this.setRespawnPosition(x, y);
   }
 
   public moveLeft(): void {
@@ -61,6 +61,11 @@ export class PlayerSprite extends Phaser.Physics.Arcade.Sprite {
       this.y < cameraY ||
       this.y > cameraY + cameraHeight
     );
+  }
+
+  public setRespawnPosition(x: number, y: number): void {
+    this.respawnX = x;
+    this.respawnY = y;
   }
 
   public respawn(): void {
