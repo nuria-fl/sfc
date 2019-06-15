@@ -7,7 +7,7 @@
   "scripts": {
     "start": "webpack",
     "dev": "webpack",
-    "deploy": "webpack --config webpack.production.config.js"
+    "deploy": "webpack --config webpack.production.config.js && cp -r assets build"
   },
   "license": "MIT",
   "devDependencies": {

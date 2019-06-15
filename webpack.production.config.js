@@ -1,28 +1,26 @@
-var path = require('path')
-var webpack = require('webpack')
-var HtmlWebpackPlugin = require('html-webpack-plugin')
+var path = require("path");
+var webpack = require("webpack");
+var HtmlWebpackPlugin = require("html-webpack-plugin");
 
 // Phaser webpack config
-var phaserModule = path.join(__dirname, '/node_modules/phaser/')
-var phaser = path.join(phaserModule, 'src/phaser.js')
+var phaserModule = path.join(__dirname, "/node_modules/phaser/");
+var phaser = path.join(phaserModule, "src/phaser.js");
 
 var definePlugin = new webpack.DefinePlugin({
-  __DEV__: JSON.stringify(JSON.parse(process.env.BUILD_DEV || 'false')),
-  WEBGL_RENDERER: true, 
-  CANVAS_RENDERER: true 
-})
+  __DEV__: JSON.stringify(JSON.parse(process.env.BUILD_DEV || "false")),
+  WEBGL_RENDERER: true,
+  CANVAS_RENDERER: true
+});
 
 module.exports = {
   entry: {
-    app: [
-      path.resolve(__dirname, 'src/main.ts')
-    ],
-    vendor: ['phaser']
+    app: [path.resolve(__dirname, "src/main.ts")],
+    vendor: ["phaser"]
   },
   output: {
-    path: path.resolve(__dirname, 'build'),
-    publicPath: './',
-    filename: 'js/bundle.js'
+    path: path.resolve(__dirname, "build"),
+    publicPath: "./",
+    filename: "js/bundle.js"
   },
   plugins: [
     definePlugin,
@@ -34,12 +32,15 @@ module.exports = {
         comments: false
       }
     }),
-    new webpack.optimize.CommonsChunkPlugin({ name: 'vendor' /* chunkName= */, filename: 'js/vendor.bundle.js' /* filename= */ }),
+    new webpack.optimize.CommonsChunkPlugin({
+      name: "vendor" /* chunkName= */,
+      filename: "js/vendor.bundle.js" /* filename= */
+    }),
     new HtmlWebpackPlugin({
-      filename: 'index.html',
-      template: './src/index.html',
-      chunks: ['vendor', 'app'],
-      chunksSortMode: 'manual',
+      filename: "index.html",
+      template: "./src/index.html",
+      chunks: ["vendor", "app"],
+      chunksSortMode: "manual",
       minify: {
         removeAttributeQuotes: true,
         collapseWhitespace: true,
@@ -57,24 +58,24 @@ module.exports = {
     rules: [
       {
         test: /\.ts$/,
-        loaders: ['babel-loader', 'awesome-typescript-loader'],
-        include: path.join(__dirname, 'src'),
+        loaders: ["babel-loader", "awesome-typescript-loader"],
+        include: path.join(__dirname, "src")
       },
-      { 
-        test: [/\.vert$/, /\.frag$/], 
-        use: 'raw-loader' 
+      {
+        test: [/\.vert$/, /\.frag$/],
+        use: "raw-loader"
       }
     ]
   },
   node: {
-    fs: 'empty',
-    net: 'empty',
-    tls: 'empty'
+    fs: "empty",
+    net: "empty",
+    tls: "empty"
   },
   resolve: {
-    extensions: ['.ts', '.js'],
+    extensions: [".ts", ".js"],
     alias: {
-      'phaser': phaser
+      phaser: phaser
     }
   }
-}
+};
