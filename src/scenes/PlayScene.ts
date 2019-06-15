@@ -1,3 +1,4 @@
+import { FireSprite } from "../sprites/fire.sprite";
 import { PlayerSprite } from "../sprites/player.sprite";
 import pages from "../text";
 
@@ -8,6 +9,7 @@ class TestScene extends Phaser.Scene {
   public platforms: Phaser.Physics.Arcade.StaticGroup;
   public respawnPlatforms: Phaser.Physics.Arcade.StaticGroup;
   private player: PlayerSprite;
+  private fire: FireSprite;
   private cursors: Phaser.Input.Keyboard.CursorKeys;
   private pageBorder: Phaser.Physics.Arcade.Image;
 
@@ -21,6 +23,10 @@ class TestScene extends Phaser.Scene {
     this.load.spritesheet("player", "/assets/sprites/wolf_spritesheet.png", {
       frameWidth: 50,
       frameHeight: 69,
+    });
+    this.load.spritesheet("fire", "/assets/sprites/fire_spritesheet.png", {
+      frameWidth: 50,
+      frameHeight: 60,
     });
     this.load.image("floor", `/assets/px.png`);
     this.load.image("pageLimit", `/assets/pagelimit.png`);
@@ -92,6 +98,7 @@ class TestScene extends Phaser.Scene {
       "player"
     );
 
+    this.fire = new FireSprite(this, 100, 80, "fire");
     this.physics.add.collider(this.player, this.platforms);
     this.physics.add.collider(this.player, this.pageBorder);
     this.physics.add.collider(
