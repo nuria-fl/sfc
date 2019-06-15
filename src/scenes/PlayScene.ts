@@ -13,7 +13,7 @@ class TestScene extends Phaser.Scene {
 
   constructor() {
     super({
-      key: "TestScene",
+      key: "TestScene"
     });
   }
 
@@ -29,23 +29,25 @@ class TestScene extends Phaser.Scene {
 
     let pageOffset = 0;
 
-    pages.forEach((page) => {
+    pages.forEach(page => {
       let lineY = 100;
-      page.forEach((line) => {
+      page.forEach(line => {
         const currentLine = line.split(" ");
         let wordX = 100;
 
-        currentLine.forEach((word) => {
+        currentLine.forEach(word => {
           const currentWord = this.add.text(wordX + pageOffset, lineY, word, {
             fontFamily: "Amatic SC",
             fontSize: 100,
-            color: "#333",
+            color: "#333"
           });
 
           const bounds = currentWord.getBounds();
 
+          let platform;
+
           if (word === "wolf") {
-            const platform = this.respawnPlatforms
+            platform = this.respawnPlatforms
               .create(bounds.x + 5, bounds.y + 10 + 10, "floor")
               .setOrigin(0, 0)
               .setScale(bounds.width - 10, bounds.height - 40)
@@ -53,12 +55,15 @@ class TestScene extends Phaser.Scene {
 
             platform.currentWord = currentWord;
           } else {
-            this.platforms
+            platform = this.platforms
               .create(bounds.x + 5, bounds.y + 10 + 10, "floor")
               .setOrigin(0, 0)
               .setScale(bounds.width - 10, bounds.height - 40)
               .refreshBody();
           }
+          platform.body.checkCollision.down = false;
+          platform.body.checkCollision.left = false;
+          platform.body.checkCollision.right = false;
 
           wordX += bounds.width + 50;
         });
@@ -81,7 +86,7 @@ class TestScene extends Phaser.Scene {
       this,
       PLAYER_INITIAL_X,
       PLAYER_INITIAL_Y,
-      "player",
+      "player"
     );
 
     this.physics.add.collider(this.player, this.platforms);
@@ -94,13 +99,19 @@ class TestScene extends Phaser.Scene {
         const { x } = wolfPlatform.getCenter();
         this.player.setRespawnPosition(x, top - this.player.height / 2);
         ((wolfPlatform as any).currentWord as Phaser.GameObjects.Text).setColor(
-          "#f00",
+          "#f00"
         );
-      },
+      }
     );
 
     this.cameras.main.setBounds(0, 0, 2000, 3000);
     this.cameras.main.startFollow(this.player, false);
+
+    this.input.keyboard.on("keydown", ({ code }) => {
+      if (code === "Space") {
+        this.player.jump();
+      }
+    });
   }
 
   public update(time: number, delta: number) {
@@ -111,8 +122,8 @@ class TestScene extends Phaser.Scene {
     } else {
       this.player.stop();
     }
-    if (this.cursors.space.isDown && this.player.canJump()) {
-      this.player.jump();
+    if (this.player.body.touching.down) {
+      this.player.enableJump();
     }
     if (this.player.isOutsideCamera(this.cameras.main)) {
       this.player.respawn();

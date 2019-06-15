@@ -1,6 +1,7 @@
 const GRAVITY_FORCE = 2000;
 const MOVE_SPEED = 250;
-const JUMP_FORCE = 800;
+const JUMP_FORCE = 600;
+const JUMP_LIMIT = 2;
 const COLLISION_WIDTH = 40;
 const COLLISION_HEIGHT = 76;
 
@@ -9,6 +10,8 @@ export class PlayerSprite extends Phaser.Physics.Arcade.Sprite {
   private jumpForce: number;
   private respawnX: number;
   private respawnY: number;
+  private canJump: boolean;
+  private jumpCount = 0;
 
   constructor(scene: Phaser.Scene, x: number, y: number, texture: string) {
     super(scene, x, y, texture);
@@ -39,11 +42,15 @@ export class PlayerSprite extends Phaser.Physics.Arcade.Sprite {
   }
 
   public jump(): void {
-    this.setVelocityY(-this.jumpForce);
+    if (this.canJump && this.jumpCount < JUMP_LIMIT) {
+      this.setVelocityY(-this.jumpForce);
+      this.jumpCount++;
+    }
   }
 
-  public canJump(): boolean {
-    return this.body.touching.down;
+  public enableJump() {
+    this.canJump = true;
+    this.jumpCount = 0;
   }
 
   public isOutsideCamera(camera: Phaser.Cameras.Scene2D.Camera): boolean {
@@ -51,7 +58,7 @@ export class PlayerSprite extends Phaser.Physics.Arcade.Sprite {
       x: cameraX,
       y: cameraY,
       width: cameraWidth,
-      height: cameraHeight,
+      height: cameraHeight
     } = camera.worldView;
 
     return (
@@ -68,6 +75,8 @@ export class PlayerSprite extends Phaser.Physics.Arcade.Sprite {
   }
 
   public respawn(): void {
+    this.setVelocity(0, 0);
+
     this.x = this.respawnX;
     this.y = this.respawnY;
   }
