@@ -17,7 +17,10 @@ export class PlayerSprite extends Phaser.Physics.Arcade.Sprite {
     this.setGravity(0, GRAVITY_FORCE);
     this.moveSpeed = MOVE_SPEED;
     this.jumpForce = JUMP_FORCE;
-    this.body.setSize(COLLISION_WIDTH, COLLISION_HEIGHT);
+    (this.body as Phaser.Physics.Arcade.Body).setSize(
+      COLLISION_WIDTH,
+      COLLISION_HEIGHT
+    );
   }
 
   public moveLeft(): void {
