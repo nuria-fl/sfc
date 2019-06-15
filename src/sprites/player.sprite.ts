@@ -21,9 +21,8 @@ export class PlayerSprite extends Phaser.Physics.Arcade.Sprite {
     this.jumpForce = JUMP_FORCE;
     (this.body as Phaser.Physics.Arcade.Body).setSize(
       COLLISION_WIDTH,
-      COLLISION_HEIGHT,
+      COLLISION_HEIGHT
     );
-    this.body.setSize(COLLISION_WIDTH, COLLISION_HEIGHT);
     this.setRespawnPosition(x, y);
   }
 
