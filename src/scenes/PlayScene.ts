@@ -2,8 +2,8 @@ import { FireSprite } from "../sprites/fire.sprite";
 import { PlayerSprite } from "../sprites/player.sprite";
 import pages from "../text";
 
-const PLAYER_INITIAL_X = 270;
-const PLAYER_INITIAL_Y = 50;
+const PLAYER_INITIAL_X = 2050;
+const PLAYER_INITIAL_Y = 600;
 
 class TestScene extends Phaser.Scene {
   public platforms: Phaser.Physics.Arcade.StaticGroup;
@@ -28,7 +28,7 @@ class TestScene extends Phaser.Scene {
           frameWidth: 50,
           frameHeight: 69,
           startFrame: 0,
-          endFrame: 3,
+          endFrame: 2,
         },
       },
       {
@@ -37,8 +37,18 @@ class TestScene extends Phaser.Scene {
         frameConfig: {
           frameWidth: 50,
           frameHeight: 87,
-          startFrame: 4,
-          endFrame: 5,
+          startFrame: 3,
+          endFrame: 4,
+        },
+      },
+      {
+        key: "player_walking",
+        url: "/assets/sprites/wolf_spritesheet.png",
+        frameConfig: {
+          frameWidth: 50,
+          frameHeight: 69,
+          startFrame: 5,
+          endFrame: 6,
         },
       },
     ]);
@@ -48,19 +58,24 @@ class TestScene extends Phaser.Scene {
     });
     this.load.image("floor", `/assets/px.png`);
     this.load.image("pageLimit", `/assets/pagelimit.png`);
+    this.load.image("background", "/assets/background.jpg");
   }
 
   public create() {
+    const background = this.add.image(0, 0, "background");
+    background.setOrigin(0, 0);
+    background.setScale(1.5);
+
     this.platforms = this.physics.add.staticGroup();
     this.respawnPlatforms = this.physics.add.staticGroup();
 
     let pageOffset = 0;
 
     pages.forEach((page) => {
-      let lineY = 100;
+      let lineY = 1300;
       page.forEach((line) => {
         const currentLine = line.split(" ");
-        let wordX = 100;
+        let wordX = 2050;
 
         currentLine.forEach((word) => {
           const currentWord = this.add.text(wordX + pageOffset, lineY, word, {
@@ -104,10 +119,10 @@ class TestScene extends Phaser.Scene {
 
     this.cursors = this.input.keyboard.createCursorKeys();
 
-    this.pageBorder = this.physics.add
-      .staticImage(1650, 10, "pageLimit")
-      .setScale(1, 2)
-      .refreshBody();
+    // this.pageBorder = this.physics.add
+    //   .staticImage(1650, 10, "pageLimit")
+    //   .setScale(1, 2)
+    //   .refreshBody();
 
     this.player = new PlayerSprite(this, PLAYER_INITIAL_X, PLAYER_INITIAL_Y);
 
@@ -127,7 +142,12 @@ class TestScene extends Phaser.Scene {
       },
     );
 
-    this.cameras.main.setBounds(0, 0, 2000, 3000);
+    this.cameras.main.setBounds(
+      0,
+      0,
+      background.width * 1.5,
+      background.height * 1.5,
+    );
     this.cameras.main.startFollow(this.player, false);
 
     this.input.keyboard.on("keydown", ({ code }) => {
@@ -147,9 +167,9 @@ class TestScene extends Phaser.Scene {
     }
     if (this.player.body.touching.down) {
       this.player.enableJump();
-      if (this.player.anims.getCurrentKey() !== "idle") {
-        this.player.play("idle");
-      }
+    }
+    if (this.player.hasStopped()) {
+      this.player.play("idle");
     }
     if (this.player.isOutsideCamera(this.cameras.main)) {
       this.player.respawn();
