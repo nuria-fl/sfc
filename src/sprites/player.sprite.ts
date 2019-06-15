@@ -1,6 +1,6 @@
 const GRAVITY_FORCE = 2000;
 const MOVE_SPEED = 250;
-const JUMP_FORCE = 600;
+const JUMP_FORCE = 650;
 const JUMP_LIMIT = 200;
 const COLLISION_WIDTH = 40;
 const COLLISION_HEIGHT = 69;
