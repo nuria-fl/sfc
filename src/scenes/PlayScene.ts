@@ -1,6 +1,9 @@
 import { PlayerSprite } from "../sprites/player.sprite";
 import pages from "../text";
 
+const PLAYER_INITIAL_X = 415;
+const PLAYER_INITIAL_Y = 100;
+
 class TestScene extends Phaser.Scene {
   public platforms: Phaser.Physics.Arcade.StaticGroup;
   private player: PlayerSprite;
@@ -9,7 +12,7 @@ class TestScene extends Phaser.Scene {
 
   constructor() {
     super({
-      key: "TestScene"
+      key: "TestScene",
     });
   }
 
@@ -24,17 +27,17 @@ class TestScene extends Phaser.Scene {
 
     let pageOffset = 0;
 
-    pages.forEach(page => {
+    pages.forEach((page) => {
       let lineY = 100;
-      page.forEach(line => {
+      page.forEach((line) => {
         const currentLine = line.split(" ");
         let wordX = 100;
 
-        currentLine.forEach(word => {
+        currentLine.forEach((word) => {
           const currentWord = this.add.text(wordX + pageOffset, lineY, word, {
             fontFamily: "Amatic SC",
             fontSize: 100,
-            color: "#333"
+            color: "#333",
           });
 
           const bounds = currentWord.getBounds();
@@ -60,7 +63,12 @@ class TestScene extends Phaser.Scene {
       .setScale(1, 2)
       .refreshBody();
 
-    this.player = new PlayerSprite(this, 100, 50, "player");
+    this.player = new PlayerSprite(
+      this,
+      PLAYER_INITIAL_X,
+      PLAYER_INITIAL_Y,
+      "player",
+    );
     this.physics.add.collider(this.player, this.platforms);
     this.physics.add.collider(this.player, this.pageBorder);
 
@@ -78,6 +86,9 @@ class TestScene extends Phaser.Scene {
     }
     if (this.cursors.space.isDown && this.player.canJump()) {
       this.player.jump();
+    }
+    if (this.player.isOutsideCamera(this.cameras.main)) {
+      this.player.respawn();
     }
   }
 }
