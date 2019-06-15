@@ -3,20 +3,18 @@ import "phaser";
 import TestScene from "./scenes/PlayScene";
 
 const config: GameConfig = {
-  type: Phaser.WEBGL,
+  type: Phaser.AUTO,
   parent: "content",
-  width: 640,
-  height: 480,
+  width: 800,
+  height: 600,
   resolution: 1,
   backgroundColor: "#EDEEC9",
   scene: [TestScene],
   physics: {
     default: "arcade",
-    arcade: {
-      gravity: { y: 800 },
-      debug: true
-    }
-  }
+    arcade: { debug: true },
+  },
 };
 
+// tslint:disable-next-line:no-unused-expression
 new Phaser.Game(config);
