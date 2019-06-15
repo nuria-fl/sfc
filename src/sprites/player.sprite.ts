@@ -12,8 +12,8 @@ export class PlayerSprite extends Phaser.Physics.Arcade.Sprite {
   private respawnY: number;
   private jumpCount = 0;
 
-  constructor(scene: Phaser.Scene, x: number, y: number, texture: string) {
-    super(scene, x, y, texture);
+  constructor(scene: Phaser.Scene, x: number, y: number) {
+    super(scene, x, y, "player_idle");
 
     this.scene.physics.world.enable(this);
     this.scene.add.existing(this);
@@ -29,14 +29,23 @@ export class PlayerSprite extends Phaser.Physics.Arcade.Sprite {
 
     this.scene.anims.create({
       key: "idle",
-      frames: this.scene.anims.generateFrameNumbers("player", {
+      frames: this.scene.anims.generateFrameNumbers("player_idle", {
         frames: [0, 1, 0, 1, 2, 1, 0, 1],
       }),
       frameRate: 5,
       repeat: -1,
     });
 
-    this.anims.play("idle");
+    this.scene.anims.create({
+      key: "jump",
+      frames: this.scene.anims.generateFrameNumbers("player_jumping", {
+        frames: [3, 4],
+      }),
+      frameRate: 5,
+      repeat: -1,
+    });
+
+    this.play("idle");
   }
 
   get canJump() {
@@ -45,10 +54,12 @@ export class PlayerSprite extends Phaser.Physics.Arcade.Sprite {
 
   public moveLeft(): void {
     this.setVelocityX(-this.moveSpeed);
+    this.flipX = true;
   }
 
   public moveRight(): void {
     this.setVelocityX(this.moveSpeed);
+    this.flipX = false;
   }
 
   public stop() {
@@ -59,6 +70,7 @@ export class PlayerSprite extends Phaser.Physics.Arcade.Sprite {
     if (this.canJump) {
       this.setVelocityY(-this.jumpForce);
       this.jumpCount++;
+      this.play("jump");
     }
   }
 
@@ -71,7 +83,7 @@ export class PlayerSprite extends Phaser.Physics.Arcade.Sprite {
       x: cameraX,
       y: cameraY,
       width: cameraWidth,
-      height: cameraHeight
+      height: cameraHeight,
     } = camera.worldView;
 
     return (

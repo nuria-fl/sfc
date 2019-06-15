@@ -15,15 +15,33 @@ class TestScene extends Phaser.Scene {
 
   constructor() {
     super({
-      key: "TestScene"
+      key: "TestScene",
     });
   }
 
   public preload() {
-    this.load.spritesheet("player", "/assets/sprites/wolf_spritesheet.png", {
-      frameWidth: 50,
-      frameHeight: 69,
-    });
+    this.load.spritesheet([
+      {
+        key: "player_idle",
+        url: "/assets/sprites/wolf_spritesheet.png",
+        frameConfig: {
+          frameWidth: 50,
+          frameHeight: 69,
+          startFrame: 0,
+          endFrame: 3,
+        },
+      },
+      {
+        key: "player_jumping",
+        url: "/assets/sprites/wolf_spritesheet.png",
+        frameConfig: {
+          frameWidth: 50,
+          frameHeight: 87,
+          startFrame: 4,
+          endFrame: 5,
+        },
+      },
+    ]);
     this.load.spritesheet("fire", "/assets/sprites/fire_spritesheet.png", {
       frameWidth: 50,
       frameHeight: 60,
@@ -38,17 +56,17 @@ class TestScene extends Phaser.Scene {
 
     let pageOffset = 0;
 
-    pages.forEach(page => {
+    pages.forEach((page) => {
       let lineY = 100;
-      page.forEach(line => {
+      page.forEach((line) => {
         const currentLine = line.split(" ");
         let wordX = 100;
 
-        currentLine.forEach(word => {
+        currentLine.forEach((word) => {
           const currentWord = this.add.text(wordX + pageOffset, lineY, word, {
             fontFamily: "Amatic SC",
             fontSize: 100,
-            color: "#333"
+            color: "#333",
           });
 
           const bounds = currentWord.getBounds();
@@ -91,12 +109,7 @@ class TestScene extends Phaser.Scene {
       .setScale(1, 2)
       .refreshBody();
 
-    this.player = new PlayerSprite(
-      this,
-      PLAYER_INITIAL_X,
-      PLAYER_INITIAL_Y,
-      "player"
-    );
+    this.player = new PlayerSprite(this, PLAYER_INITIAL_X, PLAYER_INITIAL_Y);
 
     this.fire = new FireSprite(this, 100, 80, "fire");
     this.physics.add.collider(this.player, this.platforms);
@@ -109,9 +122,9 @@ class TestScene extends Phaser.Scene {
         const { x } = wolfPlatform.getCenter();
         this.player.setRespawnPosition(x, top - this.player.height / 2);
         ((wolfPlatform as any).currentWord as Phaser.GameObjects.Text).setColor(
-          "#f00"
+          "#f00",
         );
-      }
+      },
     );
 
     this.cameras.main.setBounds(0, 0, 2000, 3000);
@@ -134,6 +147,9 @@ class TestScene extends Phaser.Scene {
     }
     if (this.player.body.touching.down) {
       this.player.enableJump();
+      if (this.player.anims.getCurrentKey() !== "idle") {
+        this.player.play("idle");
+      }
     }
     if (this.player.isOutsideCamera(this.cameras.main)) {
       this.player.respawn();
