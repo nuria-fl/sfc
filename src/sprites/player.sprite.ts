@@ -11,6 +11,7 @@ export class PlayerSprite extends Phaser.Physics.Arcade.Sprite {
   private respawnX: number;
   private respawnY: number;
   private jumpCount = 0;
+  private canMove = true;
 
   constructor(scene: Phaser.Scene, x: number, y: number) {
     super(scene, x, y, "player_idle");
@@ -58,22 +59,28 @@ export class PlayerSprite extends Phaser.Physics.Arcade.Sprite {
   }
 
   get canJump() {
-    return this.jumpCount < JUMP_LIMIT;
+    if (this.canMove) {
+      return this.jumpCount < JUMP_LIMIT;
+    }
   }
 
   public moveLeft(): void {
-    this.setVelocityX(-this.moveSpeed);
-    this.flipX = true;
-    if (this.jumpCount === 0) {
-      this.play("walk", true);
+    if (this.canMove) {
+      this.setVelocityX(-this.moveSpeed);
+      this.flipX = true;
+      if (this.jumpCount === 0) {
+        this.play("walk", true);
+      }
     }
   }
 
   public moveRight(): void {
-    this.setVelocityX(this.moveSpeed);
-    this.flipX = false;
-    if (this.jumpCount === 0) {
-      this.play("walk", true);
+    if (this.canMove) {
+      this.setVelocityX(this.moveSpeed);
+      this.flipX = false;
+      if (this.jumpCount === 0) {
+        this.play("walk", true);
+      }
     }
   }
 
@@ -123,5 +130,14 @@ export class PlayerSprite extends Phaser.Physics.Arcade.Sprite {
 
   public hasStopped(): boolean {
     return this.body.velocity.x === 0 && this.body.velocity.y === 0;
+  }
+
+  public disableMovement() {
+    this.canMove = false;
+    this.stop();
+  }
+
+  public enableMovement() {
+    this.canMove = true;
   }
 }
