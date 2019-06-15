@@ -12,8 +12,8 @@ const config: GameConfig = {
   scene: [TestScene],
   physics: {
     default: "arcade",
-    arcade: { debug: false },
-  },
+    arcade: { debug: true }
+  }
 };
 
 // tslint:disable-next-line:no-unused-expression
