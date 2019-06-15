@@ -12,7 +12,7 @@ const config: GameConfig = {
   scene: [TestScene],
   physics: {
     default: "arcade",
-    arcade: { debug: true },
+    arcade: { debug: false },
   },
 };
 

@@ -29,35 +29,30 @@ class TestScene extends Phaser.Scene {
       currentLine.forEach((word) => {
         const currentWord = this.add.text(wordX, lineY, word, {
           fontFamily: "Amatic SC",
-          fontSize: 80,
+          fontSize: 100,
           color: "#333",
         });
 
         const bounds = currentWord.getBounds();
 
         this.platforms
-          .create(bounds.x, bounds.y + 10, "floor")
+          .create(bounds.x + 5, bounds.y + 10 + 10, "floor")
           .setOrigin(0, 0)
-          .setScale(bounds.width, bounds.height - 20)
+          .setScale(bounds.width - 10, bounds.height - 40)
           .refreshBody();
 
         wordX += bounds.width + 50;
       });
-      lineY += 120;
+      lineY += 150;
     });
 
     this.cursors = this.input.keyboard.createCursorKeys();
     this.platforms.toggleVisible();
 
-    this.player = new PlayerSprite(this, 100, 100, "player");
+    this.player = new PlayerSprite(this, 100, 10, "player");
     this.physics.add.collider(this.player, this.platforms);
 
-    this.cameras.main.setBounds(
-      0,
-      0,
-      this.sys.game.config.width as number,
-      this.sys.game.config.height as number,
-    );
+    this.cameras.main.setBounds(0, 0, 2000, 2000);
     this.cameras.main.startFollow(this.player, false);
   }
 
