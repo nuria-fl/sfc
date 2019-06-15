@@ -10,7 +10,6 @@ export class PlayerSprite extends Phaser.Physics.Arcade.Sprite {
   private jumpForce: number;
   private respawnX: number;
   private respawnY: number;
-  private canJump: boolean;
   private jumpCount = 0;
 
   constructor(scene: Phaser.Scene, x: number, y: number, texture: string) {
@@ -29,6 +28,10 @@ export class PlayerSprite extends Phaser.Physics.Arcade.Sprite {
     this.setRespawnPosition(x, y);
   }
 
+  get canJump() {
+    return this.jumpCount < JUMP_LIMIT;
+  }
+
   public moveLeft(): void {
     this.setVelocityX(-this.moveSpeed);
   }
@@ -42,14 +45,13 @@ export class PlayerSprite extends Phaser.Physics.Arcade.Sprite {
   }
 
   public jump(): void {
-    if (this.canJump && this.jumpCount < JUMP_LIMIT) {
+    if (this.canJump) {
       this.setVelocityY(-this.jumpForce);
       this.jumpCount++;
     }
   }
 
   public enableJump() {
-    this.canJump = true;
     this.jumpCount = 0;
   }
 
