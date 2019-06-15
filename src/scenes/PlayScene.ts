@@ -6,7 +6,7 @@ const PLAYER_INITIAL_Y = 100;
 
 class TestScene extends Phaser.Scene {
   public platforms: Phaser.Physics.Arcade.StaticGroup;
-  public wolfPlatforms: Phaser.Physics.Arcade.StaticGroup;
+  public respawnPlatforms: Phaser.Physics.Arcade.StaticGroup;
   private player: PlayerSprite;
   private cursors: Phaser.Input.Keyboard.CursorKeys;
   private pageBorder: Phaser.Physics.Arcade.Image;
@@ -25,7 +25,7 @@ class TestScene extends Phaser.Scene {
 
   public create() {
     this.platforms = this.physics.add.staticGroup();
-    this.wolfPlatforms = this.physics.add.staticGroup();
+    this.respawnPlatforms = this.physics.add.staticGroup();
 
     let pageOffset = 0;
 
@@ -45,7 +45,7 @@ class TestScene extends Phaser.Scene {
           const bounds = currentWord.getBounds();
 
           if (word === "wolf") {
-            const platform = this.wolfPlatforms
+            const platform = this.respawnPlatforms
               .create(bounds.x + 5, bounds.y + 10 + 10, "floor")
               .setOrigin(0, 0)
               .setScale(bounds.width - 10, bounds.height - 40)
@@ -68,7 +68,7 @@ class TestScene extends Phaser.Scene {
     });
 
     this.platforms.toggleVisible();
-    this.wolfPlatforms.toggleVisible();
+    this.respawnPlatforms.toggleVisible();
 
     this.cursors = this.input.keyboard.createCursorKeys();
 
@@ -88,7 +88,7 @@ class TestScene extends Phaser.Scene {
     this.physics.add.collider(this.player, this.pageBorder);
     this.physics.add.collider(
       this.player,
-      this.wolfPlatforms,
+      this.respawnPlatforms,
       (_, wolfPlatform: Phaser.Physics.Arcade.Sprite) => {
         const { top } = wolfPlatform.body;
         const { x } = wolfPlatform.getCenter();
