@@ -3,7 +3,7 @@ const MOVE_SPEED = 250;
 const JUMP_FORCE = 600;
 const JUMP_LIMIT = 2;
 const COLLISION_WIDTH = 40;
-const COLLISION_HEIGHT = 76;
+const COLLISION_HEIGHT = 69;
 
 export class PlayerSprite extends Phaser.Physics.Arcade.Sprite {
   private moveSpeed: number;
@@ -12,20 +12,40 @@ export class PlayerSprite extends Phaser.Physics.Arcade.Sprite {
   private respawnY: number;
   private jumpCount = 0;
 
-  constructor(scene: Phaser.Scene, x: number, y: number, texture: string) {
-    super(scene, x, y, texture);
+  constructor(scene: Phaser.Scene, x: number, y: number) {
+    super(scene, x, y, "player_idle");
 
-    scene.physics.world.enable(this);
-    scene.add.existing(this);
+    this.scene.physics.world.enable(this);
+    this.scene.add.existing(this);
 
     this.setGravity(0, GRAVITY_FORCE);
     this.moveSpeed = MOVE_SPEED;
     this.jumpForce = JUMP_FORCE;
     (this.body as Phaser.Physics.Arcade.Body).setSize(
       COLLISION_WIDTH,
-      COLLISION_HEIGHT
+      COLLISION_HEIGHT,
     );
     this.setRespawnPosition(x, y);
+
+    this.scene.anims.create({
+      key: "idle",
+      frames: this.scene.anims.generateFrameNumbers("player_idle", {
+        frames: [0, 1, 0, 1, 2, 1, 0, 1],
+      }),
+      frameRate: 5,
+      repeat: -1,
+    });
+
+    this.scene.anims.create({
+      key: "jump",
+      frames: this.scene.anims.generateFrameNumbers("player_jumping", {
+        frames: [3, 4],
+      }),
+      frameRate: 5,
+      repeat: -1,
+    });
+
+    this.play("idle");
   }
 
   get canJump() {
@@ -34,10 +54,12 @@ export class PlayerSprite extends Phaser.Physics.Arcade.Sprite {
 
   public moveLeft(): void {
     this.setVelocityX(-this.moveSpeed);
+    this.flipX = true;
   }
 
   public moveRight(): void {
     this.setVelocityX(this.moveSpeed);
+    this.flipX = false;
   }
 
   public stop() {
@@ -48,6 +70,7 @@ export class PlayerSprite extends Phaser.Physics.Arcade.Sprite {
     if (this.canJump) {
       this.setVelocityY(-this.jumpForce);
       this.jumpCount++;
+      this.play("jump");
     }
   }
 
@@ -60,7 +83,7 @@ export class PlayerSprite extends Phaser.Physics.Arcade.Sprite {
       x: cameraX,
       y: cameraY,
       width: cameraWidth,
-      height: cameraHeight
+      height: cameraHeight,
     } = camera.worldView;
 
     return (
