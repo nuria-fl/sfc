@@ -18,7 +18,10 @@ class TestScene extends Phaser.Scene {
   }
 
   public preload() {
-    this.load.image("player", "/assets/sprites/lobo_quieto1.png");
+    this.load.spritesheet("player", "/assets/sprites/wolf_spritesheet.png", {
+      frameWidth: 50,
+      frameHeight: 69,
+    });
     this.load.image("floor", `/assets/px.png`);
     this.load.image("pageLimit", `/assets/pagelimit.png`);
   }

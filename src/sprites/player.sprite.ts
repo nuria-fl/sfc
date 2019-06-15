@@ -3,7 +3,7 @@ const MOVE_SPEED = 250;
 const JUMP_FORCE = 600;
 const JUMP_LIMIT = 2;
 const COLLISION_WIDTH = 40;
-const COLLISION_HEIGHT = 76;
+const COLLISION_HEIGHT = 69;
 
 export class PlayerSprite extends Phaser.Physics.Arcade.Sprite {
   private moveSpeed: number;
@@ -15,17 +15,28 @@ export class PlayerSprite extends Phaser.Physics.Arcade.Sprite {
   constructor(scene: Phaser.Scene, x: number, y: number, texture: string) {
     super(scene, x, y, texture);
 
-    scene.physics.world.enable(this);
-    scene.add.existing(this);
+    this.scene.physics.world.enable(this);
+    this.scene.add.existing(this);
 
     this.setGravity(0, GRAVITY_FORCE);
     this.moveSpeed = MOVE_SPEED;
     this.jumpForce = JUMP_FORCE;
     (this.body as Phaser.Physics.Arcade.Body).setSize(
       COLLISION_WIDTH,
-      COLLISION_HEIGHT
+      COLLISION_HEIGHT,
     );
     this.setRespawnPosition(x, y);
+
+    this.scene.anims.create({
+      key: "idle",
+      frames: this.scene.anims.generateFrameNumbers("player", {
+        frames: [0, 1, 0, 1, 2, 1, 0, 1],
+      }),
+      frameRate: 5,
+      repeat: -1,
+    });
+
+    this.anims.play("idle");
   }
 
   get canJump() {
