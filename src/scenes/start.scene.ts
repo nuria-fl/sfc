@@ -15,7 +15,7 @@ export class StartScene extends Phaser.Scene {
         fontSize: 40,
         color: "#fff"
       })
-      .setInteractive()
+      .setInteractive({ useHandCursor: true })
       .on("pointerdown", () => {
         this.scene.start("play");
       });
