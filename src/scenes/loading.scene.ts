@@ -138,6 +138,7 @@ export class LoadingScene extends Phaser.Scene {
       repeat: -1
     });
 
-    this.scene.start("start");
+    this.scene.start("play");
+    // this.scene.start("start");
   }
 }

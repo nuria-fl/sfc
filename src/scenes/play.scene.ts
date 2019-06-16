@@ -3,8 +3,9 @@ import { PlayerSprite } from "../sprites/player.sprite";
 import pages from "../text";
 import { createDialogBox, DialogService } from "../utils/dialog";
 
-const PLAYER_INITIAL_X = 2170;
-const PLAYER_INITIAL_Y = 1200;
+const PLAYER_INITIAL_X = 4500;
+// const PLAYER_INITIAL_X = 2050;
+const PLAYER_INITIAL_Y = 600;
 const PAGE_OFFSET = 1900;
 const INITIAL_X = 1985;
 const INITIAL_Y = 1240;
@@ -514,6 +515,34 @@ export class PlayScene extends Phaser.Scene {
   }
 
   private playerUseWord(word: Phaser.GameObjects.Text): void {
-    console.log("can i use? ", word.text);
+    if (word.text === "water") {
+      const mainFirePlatform = this.firePlatforms.children.entries[0];
+      const { x: playerX, y: playerY } = this.player;
+      const {
+        x: fireX,
+        y: fireY
+      } = mainFirePlatform as Phaser.GameObjects.Sprite;
+      const distance = Phaser.Math.Distance.Between(
+        playerX,
+        playerY,
+        fireX,
+        fireY
+      );
+
+      if (distance < 200) {
+        const bigPlatform = (mainFirePlatform as any).bigPlatform;
+        const bigPlatformFires = bigPlatform.fires;
+        (mainFirePlatform as any).fire.destroy(true);
+        // tslint:disable-next-line:prefer-for-of
+        for (let i = 0; i < bigPlatformFires.length; i += 1) {
+          bigPlatformFires[i].destroy(true);
+        }
+        bigPlatform.destroy(true);
+        (mainFirePlatform as any).word.setVisible(false);
+        mainFirePlatform.destroy(true);
+      } else {
+        console.log("it's too far!");
+      }
+    }
   }
 }
