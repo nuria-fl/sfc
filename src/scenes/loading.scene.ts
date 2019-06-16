@@ -20,12 +20,12 @@ export class LoadingScene extends Phaser.Scene {
       color: "#fff"
     });
 
-    this.load.image("start_background", "/assets/start_background.jpg");
+    this.load.image("start_background", "./assets/start_background.jpg");
 
     this.load.spritesheet([
       {
         key: "player_idle",
-        url: "/assets/sprites/wolf_spritesheet.png",
+        url: "./assets/sprites/wolf_spritesheet.png",
         frameConfig: {
           frameWidth: 50,
           frameHeight: 69,
@@ -35,7 +35,7 @@ export class LoadingScene extends Phaser.Scene {
       },
       {
         key: "player_jumping",
-        url: "/assets/sprites/wolf_spritesheet.png",
+        url: "./assets/sprites/wolf_spritesheet.png",
         frameConfig: {
           frameWidth: 50,
           frameHeight: 87,
@@ -45,7 +45,7 @@ export class LoadingScene extends Phaser.Scene {
       },
       {
         key: "player_walking",
-        url: "/assets/sprites/wolf_spritesheet.png",
+        url: "./assets/sprites/wolf_spritesheet.png",
         frameConfig: {
           frameWidth: 50,
           frameHeight: 69,
@@ -55,7 +55,7 @@ export class LoadingScene extends Phaser.Scene {
       },
       {
         key: "player_climbing",
-        url: "/assets/sprites/wolf_spritesheet.png",
+        url: "./assets/sprites/wolf_spritesheet.png",
         frameConfig: {
           frameWidth: 50,
           frameHeight: 87,
@@ -65,7 +65,7 @@ export class LoadingScene extends Phaser.Scene {
       },
       {
         key: "player_dying",
-        url: "/assets/sprites/wolf_spritesheet.png",
+        url: "./assets/sprites/wolf_spritesheet.png",
         frameConfig: {
           frameWidth: 50,
           frameHeight: 69,
@@ -74,50 +74,53 @@ export class LoadingScene extends Phaser.Scene {
         }
       }
     ]);
-    this.load.spritesheet("fire", "/assets/sprites/fire_spritesheet.png", {
+    this.load.spritesheet("fire", "./assets/sprites/fire_spritesheet.png", {
       frameWidth: 50,
       frameHeight: 60
     });
-    this.load.image("water_cloud", "/assets/sprites/water_cloud.png");
-    this.load.spritesheet("rain", "/assets/sprites/rain_spritesheet.png", {
+    this.load.image("water_cloud", "./assets/sprites/water_cloud.png");
+    this.load.spritesheet("rain", "./assets/sprites/rain_spritesheet.png", {
       frameWidth: 200,
       frameHeight: 170
     });
-    this.load.image("floor", `/assets/px.png`);
-    this.load.image("pageLimit", `/assets/pagelimit.png`);
-    this.load.image("background", "/assets/background.jpg");
-    this.load.image("paragraphSeparator", `/assets/paragraph-separator.png`);
-    this.load.image("ladder", `/assets/ladder.png`);
-    this.load.image("life", `/assets/sprites/wolf_life.png`);
-    this.load.audio("jump", "/assets/audio/jump.wav");
-    this.load.audio("rumble", "/assets/audio/rumble.mp3");
-    this.load.audio("lose_life", "/assets/audio/lose_life.mp3");
-    this.load.audio("fanfare", "/assets/audio/fanfare.mp3");
-    this.load.audio("background_music", "/assets/audio/background_music.mp3");
-    this.load.audio("finale_music", "/assets/audio/finale.ogg");
-    this.load.image("game_over_background", "/assets/game_over_background.jpg");
-    this.load.image("thanks_background", "/assets/thanks_background.jpg");
-    this.load.spritesheet("pig1", "/assets/sprites/pig1_spritesheet.png", {
+    this.load.image("floor", `./assets/px.png`);
+    this.load.image("pageLimit", `./assets/pagelimit.png`);
+    this.load.image("background", "./assets/background.jpg");
+    this.load.image("paragraphSeparator", `./assets/paragraph-separator.png`);
+    this.load.image("ladder", `./assets/ladder.png`);
+    this.load.image("life", `./assets/sprites/wolf_life.png`);
+    this.load.audio("jump", "./assets/audio/jump.wav");
+    this.load.audio("rumble", "./assets/audio/rumble.mp3");
+    this.load.audio("lose_life", "./assets/audio/lose_life.mp3");
+    this.load.audio("fanfare", "./assets/audio/fanfare.mp3");
+    this.load.audio("background_music", "./assets/audio/background_music.mp3");
+    this.load.audio("finale_music", "./assets/audio/finale.ogg");
+    this.load.image(
+      "game_over_background",
+      "./assets/game_over_background.jpg"
+    );
+    this.load.image("thanks_background", "./assets/thanks_background.jpg");
+    this.load.spritesheet("pig1", "./assets/sprites/pig1_spritesheet.png", {
       frameWidth: 50,
       frameHeight: 50
     });
-    this.load.spritesheet("meat1", "/assets/sprites/meat1_spritesheet.png", {
+    this.load.spritesheet("meat1", "./assets/sprites/meat1_spritesheet.png", {
       frameWidth: 50,
       frameHeight: 61
     });
-    this.load.spritesheet("pig2", "/assets/sprites/pig2_spritesheet.png", {
+    this.load.spritesheet("pig2", "./assets/sprites/pig2_spritesheet.png", {
       frameWidth: 50,
       frameHeight: 50
     });
-    this.load.spritesheet("meat2", "/assets/sprites/meat2_spritesheet.png", {
+    this.load.spritesheet("meat2", "./assets/sprites/meat2_spritesheet.png", {
       frameWidth: 50,
       frameHeight: 61
     });
-    this.load.spritesheet("pig3", "/assets/sprites/pig3_spritesheet.png", {
+    this.load.spritesheet("pig3", "./assets/sprites/pig3_spritesheet.png", {
       frameWidth: 50,
       frameHeight: 50
     });
-    this.load.spritesheet("meat3", "/assets/sprites/meat3_spritesheet.png", {
+    this.load.spritesheet("meat3", "./assets/sprites/meat3_spritesheet.png", {
       frameWidth: 50,
       frameHeight: 61
     });
