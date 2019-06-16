@@ -65,7 +65,9 @@ export class PlayScene extends Phaser.Scene {
         let wordX = INITIAL_X;
 
         currentLine.forEach(word => {
-          if (word === "") { return; }
+          if (word === "") {
+            return;
+          }
           const isPickUpWord = pickUpWords.includes(word);
           const isInteractiveWord = word === "climbing";
 
@@ -278,6 +280,7 @@ export class PlayScene extends Phaser.Scene {
   private enableClimbing() {
     if (!this.isClimbingEnabled) {
       this.player.disableMovement();
+      this.hideHUD();
       this.cameras.main.stopFollow();
       this.cameras.main.zoomTo(0.3, 1000, "Linear", false, (_, progress) => {
         if (progress === 1) {
@@ -297,6 +300,7 @@ export class PlayScene extends Phaser.Scene {
               (_, panProgress) => {
                 if (panProgress === 1) {
                   this.cameras.main.zoomTo(1);
+                  this.showHUD();
                   this.cameras.main.startFollow(this.player, false);
                   this.player.enableMovement();
                 }
@@ -377,7 +381,9 @@ export class PlayScene extends Phaser.Scene {
   }
 
   private displayInventory() {
-    if (this.HUD.length) { return; }
+    if (this.HUD.length) {
+      return;
+    }
 
     this.player.disableMovement();
 
@@ -421,5 +427,17 @@ export class PlayScene extends Phaser.Scene {
     this.HUD.forEach(item => item.destroy());
     this.HUD = [];
     this.player.enableMovement();
+  }
+
+  private hideHUD(): void {
+    for (let i = 0; i < this.player.lifes; i += 1) {
+      this.playerLifes[i].setVisible(false);
+    }
+  }
+
+  private showHUD(): void {
+    for (let i = 0; i < this.player.lifes; i += 1) {
+      this.playerLifes[i].setVisible(true);
+    }
   }
 }
