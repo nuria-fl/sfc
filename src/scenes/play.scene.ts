@@ -1,9 +1,10 @@
 import { FireSprite } from "../sprites/fire.sprite";
 import { PlayerSprite } from "../sprites/player.sprite";
+import { DialogService, createDialogBox } from "../utils/dialog";
 import pages from "../text";
 
-const PLAYER_INITIAL_X = 2050;
-const PLAYER_INITIAL_Y = 600;
+const PLAYER_INITIAL_X = 2170;
+const PLAYER_INITIAL_Y = 1200;
 const PAGE_OFFSET = 1900;
 const INITIAL_X = 1985;
 const INITIAL_Y = 1240;
@@ -14,10 +15,11 @@ export class PlayScene extends Phaser.Scene {
   public platforms: Phaser.Physics.Arcade.StaticGroup;
   public respawnPlatforms: Phaser.Physics.Arcade.StaticGroup;
   public pickUpPlatforms: Phaser.Physics.Arcade.StaticGroup;
+  public dialog: DialogService;
   private climbingPlatforms: Phaser.Physics.Arcade.StaticGroup;
   private ladder: Phaser.Physics.Arcade.Image;
   private firePlatforms: Phaser.Physics.Arcade.StaticGroup;
-  private player: PlayerSprite;
+  public player: PlayerSprite;
   private cursors: Phaser.Input.Keyboard.CursorKeys;
   private pageBorder: Phaser.Physics.Arcade.Image;
   private isClimbingEnabled = false;
@@ -33,6 +35,8 @@ export class PlayScene extends Phaser.Scene {
   }
 
   public create() {
+    this.dialog = new DialogService(this);
+
     const background = this.add.image(0, 0, "background");
     background.setOrigin(0, 0);
     background.setScale(1.2);
@@ -167,6 +171,27 @@ export class PlayScene extends Phaser.Scene {
       .refreshBody();
 
     this.player = new PlayerSprite(this, PLAYER_INITIAL_X, PLAYER_INITIAL_Y);
+
+    this.player.disableMovement();
+
+    setTimeout(() => {
+      this.createDialog(
+        "I need to eat the three little piggies!\n(Press any key to continue)",
+        () => {
+          this.createDialog(
+            "Let's see… I can pick up words pressing Z, and use them by pressing X",
+            () => {
+              this.createDialog(
+                "Certain words will interact when I go on top of them. Now, let's eat some bacon!",
+                () => {
+                  this.player.enableMovement();
+                }
+              );
+            }
+          );
+        }
+      );
+    }, 800);
 
     this.physics.add.collider(
       this.player,
@@ -441,5 +466,9 @@ export class PlayScene extends Phaser.Scene {
     for (let i = 0; i < this.player.lifes; i += 1) {
       this.playerLifes[i].setVisible(true);
     }
+  }
+
+  public createDialog(text, cb = null) {
+    createDialogBox(text, cb, this);
   }
 }
