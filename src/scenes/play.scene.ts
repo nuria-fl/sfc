@@ -653,7 +653,13 @@ export class PlayScene extends Phaser.Scene {
     const pig3Active = this.pig3.active;
 
     if (!pig1Active && !pig2Active && !pig3Active) {
-      this.scene.start("thanks");
+      this.player.jump();
+      this.player.disableMovement();
+      this.music.stop();
+      this.sound.play("fanfare");
+      setTimeout(() => {
+        this.scene.start("thanks");
+      }, 1500);
     }
   }
 
