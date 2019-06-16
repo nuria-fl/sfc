@@ -419,7 +419,8 @@ export class PlayScene extends Phaser.Scene {
     const platforms = [
       { x: 2710, y: 2335 },
       { x: 2710, y: 3215 },
-      { x: 2710 + PAGE_OFFSET, y: 1635 }
+      { x: 2710 + PAGE_OFFSET, y: 1635 },
+      { x: 2410 + PAGE_OFFSET, y: 2500 }
     ];
 
     platforms.forEach(platform => {
@@ -509,7 +510,7 @@ export class PlayScene extends Phaser.Scene {
         .text(
           this.player.x - 390,
           this.player.y - 290,
-          "Press 'ESC' to close inventory",
+          "Press 'ESC' to close inventory, 'Z' to use a word",
           {
             fontFamily: "Amatic SC",
             fontSize: 30,
