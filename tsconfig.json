@@ -7,5 +7,18 @@
     "allowSyntheticDefaultImports": true
   },
 
-  "files": ["src/phaser.d.ts", "src/main.ts"]
+  "files": ["src/phaser.d.ts", "src/main.ts"],
+  "awesomeTypescriptLoaderOptions": {
+    "useBabel": true,
+    "babelOptions": {
+      "babelrc": false /* Important line */,
+      "presets": [
+        [
+          "@babel/preset-env",
+          { "targets": "last 2 versions, ie 11", "modules": false }
+        ]
+      ]
+    },
+    "babelCore": "@babel/core" // needed for Babel v7
+  }
 }
