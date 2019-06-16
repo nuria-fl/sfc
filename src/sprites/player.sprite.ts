@@ -65,7 +65,7 @@ export class PlayerSprite extends Phaser.Physics.Arcade.Sprite {
       this.setVelocityY(-this.jumpForce);
       this.jumpCount++;
       this.play("jump");
-      this.scene.sound.play("jump");
+      // this.scene.sound.play("jump");
     }
   }
 

@@ -256,10 +256,7 @@ class TestScene extends Phaser.Scene {
       }
     });
 
-    this.sound.play("background_music", { loop: true });
-
-    // TODO: remove this later
-    this.sound.pauseAll();
+    // this.sound.play("background_music", { loop: true });
   }
 
   public update(time: number, delta: number) {
