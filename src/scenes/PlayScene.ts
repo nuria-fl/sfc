@@ -23,7 +23,7 @@ class TestScene extends Phaser.Scene {
 
   constructor() {
     super({
-      key: "TestScene",
+      key: "TestScene"
     });
   }
 
@@ -36,8 +36,8 @@ class TestScene extends Phaser.Scene {
           frameWidth: 50,
           frameHeight: 69,
           startFrame: 0,
-          endFrame: 2,
-        },
+          endFrame: 2
+        }
       },
       {
         key: "player_jumping",
@@ -46,8 +46,8 @@ class TestScene extends Phaser.Scene {
           frameWidth: 50,
           frameHeight: 87,
           startFrame: 3,
-          endFrame: 4,
-        },
+          endFrame: 4
+        }
       },
       {
         key: "player_walking",
@@ -56,56 +56,58 @@ class TestScene extends Phaser.Scene {
           frameWidth: 50,
           frameHeight: 69,
           startFrame: 5,
-          endFrame: 6,
-        },
-      },
+          endFrame: 6
+        }
+      }
     ]);
     this.load.spritesheet("fire", "/assets/sprites/fire_spritesheet.png", {
       frameWidth: 50,
-      frameHeight: 60,
+      frameHeight: 60
     });
     this.load.image("floor", `/assets/px.png`);
     this.load.image("pageLimit", `/assets/pagelimit.png`);
     this.load.image("background", "/assets/background.jpg");
     this.load.image("paragraphSeparator", `/assets/paragraph-separator.png`);
     this.load.image("ladder", `/assets/ladder.png`);
+    this.load.audio("jump", "/assets/audio/jump.wav");
+    this.load.audio("background_music", "/assets/audio/background_music.mp3");
   }
 
   public create() {
     this.anims.create({
       key: "fire",
       frames: this.anims.generateFrameNumbers("fire", {
-        frames: [0, 1],
+        frames: [0, 1]
       }),
       frameRate: 4,
-      repeat: -1,
+      repeat: -1
     });
 
     this.anims.create({
       key: "idle",
       frames: this.anims.generateFrameNumbers("player_idle", {
-        frames: [0, 1, 0, 1, 2, 1, 0, 1],
+        frames: [0, 1, 0, 1, 2, 1, 0, 1]
       }),
       frameRate: 5,
-      repeat: -1,
+      repeat: -1
     });
 
     this.anims.create({
       key: "jump",
       frames: this.anims.generateFrameNumbers("player_jumping", {
-        frames: [3, 4],
+        frames: [3, 4]
       }),
       frameRate: 5,
-      repeat: -1,
+      repeat: -1
     });
 
     this.anims.create({
       key: "walk",
       frames: this.anims.generateFrameNumbers("player_walking", {
-        frames: [5, 6],
+        frames: [5, 6]
       }),
       frameRate: 6,
-      repeat: -1,
+      repeat: -1
     });
 
     const background = this.add.image(0, 0, "background");
@@ -124,17 +126,17 @@ class TestScene extends Phaser.Scene {
 
     let pageOffset = 0;
 
-    pages.forEach((page) => {
+    pages.forEach(page => {
       let lineY = INITIAL_Y;
-      page.forEach((line) => {
+      page.forEach(line => {
         const currentLine = line.split(" ");
         let wordX = INITIAL_X;
 
-        currentLine.forEach((word) => {
+        currentLine.forEach(word => {
           const currentWord = this.add.text(wordX + pageOffset, lineY, word, {
             fontFamily: "Amatic SC",
             fontSize: 100,
-            color: "#333",
+            color: "#333"
           });
 
           const bounds = currentWord.getBounds();
@@ -145,19 +147,19 @@ class TestScene extends Phaser.Scene {
             platform = this.buildPlatform(
               this.respawnPlatforms,
               bounds,
-              currentWord,
+              currentWord
             );
           } else if (word.match(/^fire/)) {
             platform = this.buildPlatform(
               this.firePlatforms,
               bounds,
-              currentWord,
+              currentWord
             );
             platform.fire = new FireSprite(
               this,
               platform.x + bounds.width / 2,
               platform.y - bounds.height / 4,
-              "fire",
+              "fire"
             );
             platform.bigPlatform = this.buildPlatform(
               this.firePlatforms,
@@ -165,9 +167,9 @@ class TestScene extends Phaser.Scene {
                 x: platform.x - 1310,
                 y: platform.y + 270,
                 width: 1510,
-                height: 100,
+                height: 100
               } as Phaser.Geom.Rectangle,
-              currentWord,
+              currentWord
             );
             platform.bigPlatform.fires = [];
             const totalFires = 20;
@@ -177,8 +179,8 @@ class TestScene extends Phaser.Scene {
                   this,
                   platform.bigPlatform.x + 50 + (i / totalFires) * 1510,
                   platform.bigPlatform.y,
-                  "fire",
-                ),
+                  "fire"
+                )
               );
             }
           } else {
@@ -217,7 +219,7 @@ class TestScene extends Phaser.Scene {
         ) {
           this.enableClimbing();
         }
-      },
+      }
     );
     this.physics.add.collider(this.player, this.platforms);
     this.physics.add.collider(this.player, this.pageBorder);
@@ -229,9 +231,9 @@ class TestScene extends Phaser.Scene {
         const { x } = wolfPlatform.getCenter();
         this.player.setRespawnPosition(x, top - this.player.height / 2);
         ((wolfPlatform as any).word as Phaser.GameObjects.Text).setColor(
-          "#f00",
+          "#f00"
         );
-      },
+      }
     );
     this.physics.add.collider(this.player, this.firePlatforms, () => {
       this.player.respawn();
@@ -241,7 +243,7 @@ class TestScene extends Phaser.Scene {
       0,
       0,
       background.width * 1.2,
-      background.height * 1.2,
+      background.height * 1.2
     );
     this.cameras.main.startFollow(this.player, false);
 
@@ -250,6 +252,8 @@ class TestScene extends Phaser.Scene {
         this.player.jump();
       }
     });
+
+    this.sound.play("background_music", { loop: true });
   }
 
   public update(time: number, delta: number) {
@@ -298,7 +302,7 @@ class TestScene extends Phaser.Scene {
                   this.cameras.main.startFollow(this.player, false);
                   this.player.enableMovement();
                 }
-              },
+              }
             );
           }, BUILDING_TIME);
         }
@@ -311,14 +315,14 @@ class TestScene extends Phaser.Scene {
     const platforms = [
       { x: 2710, y: 2335 },
       { x: 2710, y: 3215 },
-      { x: 2710 + PAGE_OFFSET, y: 1635 },
+      { x: 2710 + PAGE_OFFSET, y: 1635 }
     ];
 
-    platforms.forEach((platform) => {
+    platforms.forEach(platform => {
       const currentPlatform = this.climbingPlatforms.create(
         platform.x,
         platform.y,
-        "paragraphSeparator",
+        "paragraphSeparator"
       );
 
       currentPlatform.body.checkCollision.down = false;
@@ -340,7 +344,7 @@ class TestScene extends Phaser.Scene {
       repeat: 0,
       onComplete() {
         scene.ladder.refreshBody();
-      },
+      }
     });
 
     this.ladder.body.checkCollision.down = false;
@@ -358,7 +362,7 @@ class TestScene extends Phaser.Scene {
   private buildPlatform(
     staticGroup: Phaser.Physics.Arcade.StaticGroup,
     bounds: Phaser.Geom.Rectangle,
-    word: Phaser.GameObjects.Text,
+    word: Phaser.GameObjects.Text
   ) {
     const platform = staticGroup
       .create(bounds.x + 5, bounds.y + 10 + 10, "floor")
