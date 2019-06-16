@@ -3,6 +3,7 @@ import "phaser";
 import { GameOverScene } from "./scenes/game_over.scene";
 import { LoadingScene } from "./scenes/loading.scene";
 import { PlayScene } from "./scenes/play.scene";
+import { PreLoadingScene } from "./scenes/pre_loading.scene";
 import { StartScene } from "./scenes/start.scene";
 
 const config: GameConfig = {
@@ -11,8 +12,8 @@ const config: GameConfig = {
   width: 800,
   height: 600,
   resolution: 1,
-  backgroundColor: "#EDEEC9",
-  scene: [LoadingScene, StartScene, PlayScene, GameOverScene],
+  backgroundColor: "#040407",
+  scene: [PreLoadingScene, LoadingScene, StartScene, PlayScene, GameOverScene],
   physics: {
     default: "arcade",
     arcade: { debug: true }

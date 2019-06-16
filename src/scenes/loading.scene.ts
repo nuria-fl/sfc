@@ -6,10 +6,12 @@ export class LoadingScene extends Phaser.Scene {
   }
 
   public preload() {
-    this.add.text(342, 284, "Loading...", {
+    this.add.image(0, 0, "loading_background").setOrigin(0);
+
+    this.add.text(342, 330, "loading...", {
       fontFamily: "Amatic SC",
       fontSize: 40,
-      color: "#000"
+      color: "#fff"
     });
 
     this.load.image("start_background", "/assets/start_background.jpg");
@@ -69,6 +71,11 @@ export class LoadingScene extends Phaser.Scene {
     this.load.spritesheet("fire", "/assets/sprites/fire_spritesheet.png", {
       frameWidth: 50,
       frameHeight: 60
+    });
+    this.load.image("water_cloud", "/assets/sprites/water_cloud.png");
+    this.load.spritesheet("rain", "/assets/sprites/rain_spritesheet.png", {
+      frameWidth: 200,
+      frameHeight: 170
     });
     this.load.image("floor", `/assets/px.png`);
     this.load.image("pageLimit", `/assets/pagelimit.png`);
@@ -136,6 +143,16 @@ export class LoadingScene extends Phaser.Scene {
       repeat: -1
     });
 
-    this.scene.start("start");
+    this.anims.create({
+      key: "rain",
+      frames: this.anims.generateFrameNumbers("rain", {
+        frames: [0, 1, 1, 0, 1]
+      }),
+      frameRate: 6,
+      repeat: 2
+    });
+
+    this.scene.start("play");
+    // this.scene.start("start");
   }
 }

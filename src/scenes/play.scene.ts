@@ -1,36 +1,42 @@
 import { FireSprite } from "../sprites/fire.sprite";
 import { PlayerSprite } from "../sprites/player.sprite";
-import { DialogService, createDialogBox } from "../utils/dialog";
+import { WaterCloudSprite } from "../sprites/water_cloud.sprite";
 import pages from "../text";
+import { createDialogBox, DialogService } from "../utils/dialog";
 
-const PLAYER_INITIAL_X = 2170;
-const PLAYER_INITIAL_Y = 1200;
+const PLAYER_INITIAL_X = 5033;
+// const PLAYER_INITIAL_X = 2050;
+const PLAYER_INITIAL_Y = 1400;
+// const PLAYER_INITIAL_Y = 600;
 const PAGE_OFFSET = 1900;
 const INITIAL_X = 1985;
 const INITIAL_Y = 1240;
 const LINE_HEIGHT = 175;
 const WORD_SPACE = 50;
+const INVENTORY_HUD_OFFSET = 2;
 
 export class PlayScene extends Phaser.Scene {
   public platforms: Phaser.Physics.Arcade.StaticGroup;
   public respawnPlatforms: Phaser.Physics.Arcade.StaticGroup;
   public pickUpPlatforms: Phaser.Physics.Arcade.StaticGroup;
   public dialog: DialogService;
-  private climbingPlatforms: Phaser.Physics.Arcade.StaticGroup;
-  private ladder: Phaser.Physics.Arcade.Image;
-  private firePlatforms: Phaser.Physics.Arcade.StaticGroup;
   public player: PlayerSprite;
-  private cursors: Phaser.Input.Keyboard.CursorKeys;
-  private pageBorder: Phaser.Physics.Arcade.Image;
-  private isClimbingEnabled = false;
-  private pickUpWord: any = null;
-  private inventory: string[] = [];
-  private HUD = [];
-  private playerLifes: Phaser.GameObjects.Image[];
   public world = {
     width: 0,
     height: 0
   };
+  private climbingPlatforms: Phaser.Physics.Arcade.StaticGroup;
+  private ladder: Phaser.Physics.Arcade.Image;
+  private firePlatforms: Phaser.Physics.Arcade.StaticGroup;
+  private cursors: Phaser.Input.Keyboard.CursorKeys;
+  private pageBorder: Phaser.Physics.Arcade.Image;
+  private isClimbingEnabled = false;
+  private pickUpWord: any = null;
+  private inventory: string[] = ["water", "eat"];
+  private inventoryOpened = false;
+  private inventoryWordSelected: number | null = null;
+  private HUD = [];
+  private playerLifes: Phaser.GameObjects.Image[];
 
   constructor() {
     super({
@@ -242,13 +248,20 @@ export class PlayScene extends Phaser.Scene {
         this.pickUpWord = null;
       }
 
-      if (code === "KeyZ" && this.pickUpWord) {
-        this.inventory.push(
-          ((this.pickUpWord as any).word as Phaser.GameObjects.Text).text
-        );
+      if (code === "KeyZ") {
+        if (this.inventoryOpened && this.inventoryWordSelected !== null) {
+          this.playerUseWord(
+            this.HUD[INVENTORY_HUD_OFFSET + this.inventoryWordSelected]
+          );
+          this.closeInventory();
+        } else if (this.pickUpWord) {
+          this.inventory.push(
+            ((this.pickUpWord as any).word as Phaser.GameObjects.Text).text
+          );
 
-        this.pickUpWord.destroy();
-        ((this.pickUpWord as any).word as Phaser.GameObjects.Text).destroy();
+          this.pickUpWord.destroy();
+          ((this.pickUpWord as any).word as Phaser.GameObjects.Text).destroy();
+        }
       }
 
       if (
@@ -298,6 +311,35 @@ export class PlayScene extends Phaser.Scene {
     }
 
     this.player.enableGravity();
+
+    if (this.inventoryOpened) {
+      if (
+        this.cursors.down.isDown &&
+        this.inventoryWordSelected < this.inventory.length - 1
+      ) {
+        this.inventoryWordSelected += 1;
+      }
+
+      if (this.cursors.up.isDown && this.inventoryWordSelected > 0) {
+        this.inventoryWordSelected -= 1;
+      }
+
+      for (
+        let i = INVENTORY_HUD_OFFSET;
+        i < this.inventory.length + INVENTORY_HUD_OFFSET;
+        i += 1
+      ) {
+        if (i === this.inventoryWordSelected + INVENTORY_HUD_OFFSET) {
+          this.HUD[i].setAlpha(1);
+        } else {
+          this.HUD[i].setAlpha(0.3);
+        }
+      }
+    }
+  }
+
+  public createDialog(text, cb = null) {
+    createDialogBox(text, cb, this);
   }
 
   private enableClimbing() {
@@ -410,6 +452,7 @@ export class PlayScene extends Phaser.Scene {
       return;
     }
 
+    this.inventoryOpened = true;
     this.player.disableMovement();
 
     this.HUD.push(
@@ -436,6 +479,11 @@ export class PlayScene extends Phaser.Scene {
         .setFixedSize(800, 30)
     );
     let yPosition = this.player.y - LINE_HEIGHT;
+
+    if (this.inventory.length > 0) {
+      this.inventoryWordSelected = 0;
+    }
+
     this.inventory.forEach((word, i) => {
       this.HUD.push(
         this.add.text(this.player.x - this.player.width / 2, yPosition, word, {
@@ -451,6 +499,8 @@ export class PlayScene extends Phaser.Scene {
   private closeInventory() {
     this.HUD.forEach(item => item.destroy());
     this.HUD = [];
+    this.inventoryOpened = false;
+    this.inventoryWordSelected = null;
     this.player.enableMovement();
   }
 
@@ -466,7 +516,44 @@ export class PlayScene extends Phaser.Scene {
     }
   }
 
-  public createDialog(text, cb = null) {
-    createDialogBox(text, cb, this);
+  private playerUseWord(word: Phaser.GameObjects.Text): void {
+    if (word.text === "water") {
+      const mainFirePlatform = this.firePlatforms.children.entries[0];
+      const { x: playerX, y: playerY } = this.player;
+      const {
+        x: fireX,
+        y: fireY
+      } = mainFirePlatform as Phaser.GameObjects.Sprite;
+      const distance = Phaser.Math.Distance.Between(
+        playerX,
+        playerY,
+        fireX,
+        fireY
+      );
+
+      if (distance < 200) {
+        const bigPlatform = (mainFirePlatform as any).bigPlatform;
+        const bigPlatformFires = bigPlatform.fires;
+
+        const waterCloud = new WaterCloudSprite(
+          this,
+          (mainFirePlatform.body as Phaser.Physics.Arcade.Body).center.x,
+          (mainFirePlatform.body as Phaser.Physics.Arcade.Body).center.y - 200
+        );
+        waterCloud.onRainEnded(() => {
+          (mainFirePlatform as any).fire.destroy(true);
+          // tslint:disable-next-line:prefer-for-of
+          for (let i = 0; i < bigPlatformFires.length; i += 1) {
+            bigPlatformFires[i].destroy(true);
+          }
+          bigPlatform.destroy(true);
+          (mainFirePlatform as any).word.setVisible(false);
+          mainFirePlatform.destroy(true);
+          waterCloud.destroy();
+        });
+      } else {
+        // console.log("it's too far!");
+      }
+    }
   }
 }
