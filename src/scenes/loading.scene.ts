@@ -6,10 +6,12 @@ export class LoadingScene extends Phaser.Scene {
   }
 
   public preload() {
-    this.add.text(342, 284, "Loading...", {
+    this.add.image(0, 0, "loading_background").setOrigin(0);
+
+    this.add.text(342, 330, "loading...", {
       fontFamily: "Amatic SC",
       fontSize: 40,
-      color: "#000"
+      color: "#fff"
     });
 
     this.load.image("start_background", "/assets/start_background.jpg");
