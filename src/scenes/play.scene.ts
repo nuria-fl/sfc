@@ -358,6 +358,8 @@ export class PlayScene extends Phaser.Scene {
       this.player.disableGravity();
       this.player.setVelocityX(0);
       this.player.setVelocityY(-400);
+
+      this.player.play("climb", true);
     });
   }
 

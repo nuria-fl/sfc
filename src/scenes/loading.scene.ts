@@ -44,6 +44,16 @@ export class LoadingScene extends Phaser.Scene {
           startFrame: 5,
           endFrame: 6
         }
+      },
+      {
+        key: "player_climbing",
+        url: "/assets/sprites/wolf_spritesheet.png",
+        frameConfig: {
+          frameWidth: 50,
+          frameHeight: 87,
+          startFrame: 7,
+          endFrame: 8
+        }
       }
     ]);
     this.load.spritesheet("fire", "/assets/sprites/fire_spritesheet.png", {
@@ -93,6 +103,15 @@ export class LoadingScene extends Phaser.Scene {
       key: "walk",
       frames: this.anims.generateFrameNumbers("player_walking", {
         frames: [5, 6]
+      }),
+      frameRate: 6,
+      repeat: -1
+    });
+
+    this.anims.create({
+      key: "climb",
+      frames: this.anims.generateFrameNumbers("player_climbing", {
+        frames: [7, 8]
       }),
       frameRate: 6,
       repeat: -1
