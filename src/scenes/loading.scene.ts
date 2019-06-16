@@ -14,6 +14,12 @@ export class LoadingScene extends Phaser.Scene {
       color: "#fff"
     });
 
+    const loadingProgress = this.add.text(372, 370, "0%", {
+      fontFamily: "Amatic SC",
+      fontSize: 30,
+      color: "#fff"
+    });
+
     this.load.image("start_background", "/assets/start_background.jpg");
 
     this.load.spritesheet([
@@ -86,6 +92,7 @@ export class LoadingScene extends Phaser.Scene {
     this.load.audio("jump", "/assets/audio/jump.wav");
     this.load.audio("background_music", "/assets/audio/background_music.mp3");
     this.load.image("game_over_background", "/assets/game_over_background.jpg");
+    this.load.image("thanks_background", "/assets/thanks_background.jpg");
     this.load.spritesheet("pig1", "/assets/sprites/pig1_spritesheet.png", {
       frameWidth: 50,
       frameHeight: 50
@@ -109,6 +116,10 @@ export class LoadingScene extends Phaser.Scene {
     this.load.spritesheet("meat3", "/assets/sprites/meat3_spritesheet.png", {
       frameWidth: 50,
       frameHeight: 61
+    });
+
+    this.load.on("progress", value => {
+      loadingProgress.setText(`${Math.ceil(value * 100)}%`);
     });
   }
 
