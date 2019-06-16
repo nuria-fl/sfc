@@ -1,6 +1,6 @@
 const GRAVITY_FORCE = 2000;
 const MOVE_SPEED = 250;
-const JUMP_FORCE = 600;
+const JUMP_FORCE = 650;
 const JUMP_LIMIT = 200;
 const COLLISION_WIDTH = 40;
 const COLLISION_HEIGHT = 69;
@@ -11,6 +11,7 @@ export class PlayerSprite extends Phaser.Physics.Arcade.Sprite {
   private respawnX: number;
   private respawnY: number;
   private jumpCount = 0;
+  private canMove = true;
 
   constructor(scene: Phaser.Scene, x: number, y: number) {
     super(scene, x, y, "player_idle");
@@ -18,7 +19,7 @@ export class PlayerSprite extends Phaser.Physics.Arcade.Sprite {
     this.scene.physics.world.enable(this);
     this.scene.add.existing(this);
 
-    this.setGravity(0, GRAVITY_FORCE);
+    this.enableGravity();
     this.moveSpeed = MOVE_SPEED;
     this.jumpForce = JUMP_FORCE;
     (this.body as Phaser.Physics.Arcade.Body).setSize(
@@ -58,22 +59,28 @@ export class PlayerSprite extends Phaser.Physics.Arcade.Sprite {
   }
 
   get canJump() {
-    return this.jumpCount < JUMP_LIMIT;
+    if (this.canMove) {
+      return this.jumpCount < JUMP_LIMIT;
+    }
   }
 
   public moveLeft(): void {
-    this.setVelocityX(-this.moveSpeed);
-    this.flipX = true;
-    if (this.jumpCount === 0) {
-      this.play("walk", true);
+    if (this.canMove) {
+      this.setVelocityX(-this.moveSpeed);
+      this.flipX = true;
+      if (this.jumpCount === 0) {
+        this.play("walk", true);
+      }
     }
   }
 
   public moveRight(): void {
-    this.setVelocityX(this.moveSpeed);
-    this.flipX = false;
-    if (this.jumpCount === 0) {
-      this.play("walk", true);
+    if (this.canMove) {
+      this.setVelocityX(this.moveSpeed);
+      this.flipX = false;
+      if (this.jumpCount === 0) {
+        this.play("walk", true);
+      }
     }
   }
 
@@ -123,5 +130,22 @@ export class PlayerSprite extends Phaser.Physics.Arcade.Sprite {
 
   public hasStopped(): boolean {
     return this.body.velocity.x === 0 && this.body.velocity.y === 0;
+  }
+
+  public disableMovement() {
+    this.canMove = false;
+    this.stop();
+  }
+
+  public enableMovement() {
+    this.canMove = true;
+  }
+
+  public enableGravity() {
+    this.setGravityY(GRAVITY_FORCE);
+  }
+
+  public disableGravity() {
+    this.setGravityY(0);
   }
 }
