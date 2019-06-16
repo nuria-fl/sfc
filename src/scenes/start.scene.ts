@@ -17,8 +17,12 @@ export class StartScene extends Phaser.Scene {
       })
       .setInteractive({ useHandCursor: true })
       .on("pointerdown", () => {
-        this.scene.start("play");
+        this.goToPlay();
       });
+
+    this.input.keyboard.on("keydown", () => {
+      this.goToPlay();
+    });
 
     this.add
       .text(352, 324, "Continue", {
@@ -35,5 +39,9 @@ export class StartScene extends Phaser.Scene {
         color: "#fff"
       })
       .setAlpha(0.5);
+  }
+
+  private goToPlay() {
+    this.scene.start("play");
   }
 }
