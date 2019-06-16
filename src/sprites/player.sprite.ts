@@ -132,7 +132,7 @@ export class PlayerSprite extends Phaser.Physics.Arcade.Sprite {
         if (this.respawn()) {
           scene.playerLifes[this.lifes].setVisible(false);
         } else {
-          scene.scene.start("game_over");
+          scene.goToGameOver();
         }
       }, 1500);
     }
