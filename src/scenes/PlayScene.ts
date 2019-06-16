@@ -211,7 +211,10 @@ class TestScene extends Phaser.Scene {
       this.player,
       this.platforms,
       (_, platform: Phaser.Physics.Arcade.Sprite) => {
-        if ((platform as any).wordKey === "climbing") {
+        if (
+          ((platform as any).word as Phaser.GameObjects.Text).text ===
+          "climbing"
+        ) {
           this.enableClimbing();
         }
       },
@@ -225,7 +228,7 @@ class TestScene extends Phaser.Scene {
         const { top } = wolfPlatform.body;
         const { x } = wolfPlatform.getCenter();
         this.player.setRespawnPosition(x, top - this.player.height / 2);
-        ((wolfPlatform as any).currentWord as Phaser.GameObjects.Text).setColor(
+        ((wolfPlatform as any).word as Phaser.GameObjects.Text).setColor(
           "#f00",
         );
       },
@@ -366,7 +369,7 @@ class TestScene extends Phaser.Scene {
     platform.body.checkCollision.down = false;
     platform.body.checkCollision.left = false;
     platform.body.checkCollision.right = false;
-    platform.wordKey = word;
+    platform.word = word;
 
     return platform;
   }
