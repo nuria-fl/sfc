@@ -204,12 +204,14 @@ export class PlayScene extends Phaser.Scene {
         "I need to eat the three little piggies!\n(Press any key to continue)",
         () => {
           this.createDialog(
-            "Let's see… I can pick up words pressing Z, and use them by pressing X",
+            "Let's see… I can move with the arrow keys, jump and double jump with the space bar.",
             () => {
               this.createDialog(
-                "Certain words will interact when I go on top of them. Now, let's eat some bacon!",
+                "I can pick up words pressing Z, and use them by pressing X. Certain words will interact when I go on top of them.",
                 () => {
-                  this.player.enableMovement();
+                  this.createDialog("Now, let's eat some bacon!", () => {
+                    this.player.enableMovement();
+                  });
                 }
               );
             }
@@ -592,6 +594,12 @@ export class PlayScene extends Phaser.Scene {
           (mainFirePlatform as any).word.setVisible(false);
           mainFirePlatform.destroy(true);
           waterCloud.destroy();
+          this.pageBorder.destroy();
+        });
+      } else {
+        this.player.disableMovement();
+        this.createDialog("I can't use that here!", () => {
+          this.player.enableMovement();
         });
       }
     } else if (word.text === "eat") {
@@ -644,6 +652,11 @@ export class PlayScene extends Phaser.Scene {
 
       if (pigToBeEaten && minimum < 200) {
         pigToBeEaten.setVulnerable();
+      } else {
+        this.player.disableMovement();
+        this.createDialog("I can't use that here!", () => {
+          this.player.enableMovement();
+        });
       }
     }
   }
