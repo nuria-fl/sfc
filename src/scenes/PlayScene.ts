@@ -23,7 +23,7 @@ class TestScene extends Phaser.Scene {
 
   constructor() {
     super({
-      key: "TestScene",
+      key: "TestScene"
     });
   }
 
@@ -36,8 +36,8 @@ class TestScene extends Phaser.Scene {
           frameWidth: 50,
           frameHeight: 69,
           startFrame: 0,
-          endFrame: 2,
-        },
+          endFrame: 2
+        }
       },
       {
         key: "player_jumping",
@@ -56,8 +56,8 @@ class TestScene extends Phaser.Scene {
           frameWidth: 50,
           frameHeight: 69,
           startFrame: 5,
-          endFrame: 6,
-        },
+          endFrame: 6
+        }
       },
     ]);
     this.load.spritesheet("fire", "/assets/sprites/fire_spritesheet.png", {
@@ -67,13 +67,10 @@ class TestScene extends Phaser.Scene {
     this.load.image("floor", `/assets/px.png`);
     this.load.image("pageLimit", `/assets/pagelimit.png`);
     this.load.image("background", "/assets/background.jpg");
-<<<<<<< HEAD
     this.load.image("paragraphSeparator", `/assets/paragraph-separator.png`);
     this.load.image("ladder", `/assets/ladder.png`);
-=======
     this.load.audio("jump", "/assets/audio/jump.wav");
     this.load.audio("background_music", "/assets/audio/background_music.mp3");
->>>>>>> 3588bb5... feat: add background music and jump sound
   }
 
   public create() {
