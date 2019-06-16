@@ -24,7 +24,7 @@ export class PlayerSprite extends Phaser.Physics.Arcade.Sprite {
     this.jumpForce = JUMP_FORCE;
     (this.body as Phaser.Physics.Arcade.Body).setSize(
       COLLISION_WIDTH,
-      COLLISION_HEIGHT,
+      COLLISION_HEIGHT
     );
     this.setRespawnPosition(x, y);
     this.play("idle");
@@ -65,7 +65,7 @@ export class PlayerSprite extends Phaser.Physics.Arcade.Sprite {
       this.setVelocityY(-this.jumpForce);
       this.jumpCount++;
       this.play("jump");
-      // this.scene.sound.play("jump");
+      this.scene.sound.play("jump");
     }
   }
 
@@ -78,7 +78,7 @@ export class PlayerSprite extends Phaser.Physics.Arcade.Sprite {
       x: cameraX,
       y: cameraY,
       width: cameraWidth,
-      height: cameraHeight,
+      height: cameraHeight
     } = camera.worldView;
 
     return (
