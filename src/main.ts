@@ -5,6 +5,7 @@ import { LoadingScene } from "./scenes/loading.scene";
 import { PlayScene } from "./scenes/play.scene";
 import { PreLoadingScene } from "./scenes/pre_loading.scene";
 import { StartScene } from "./scenes/start.scene";
+import { ThanksScene } from "./scenes/thanks.scene";
 
 const config: GameConfig = {
   type: Phaser.AUTO,
@@ -13,7 +14,14 @@ const config: GameConfig = {
   height: 600,
   resolution: 1,
   backgroundColor: "#040407",
-  scene: [PreLoadingScene, LoadingScene, StartScene, PlayScene, GameOverScene],
+  scene: [
+    PreLoadingScene,
+    LoadingScene,
+    StartScene,
+    PlayScene,
+    GameOverScene,
+    ThanksScene
+  ],
   physics: {
     default: "arcade",
     arcade: { debug: true }

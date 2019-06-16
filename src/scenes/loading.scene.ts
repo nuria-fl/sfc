@@ -86,6 +86,30 @@ export class LoadingScene extends Phaser.Scene {
     this.load.audio("jump", "/assets/audio/jump.wav");
     this.load.audio("background_music", "/assets/audio/background_music.mp3");
     this.load.image("game_over_background", "/assets/game_over_background.jpg");
+    this.load.spritesheet("pig1", "/assets/sprites/pig1_spritesheet.png", {
+      frameWidth: 50,
+      frameHeight: 50
+    });
+    this.load.spritesheet("meat1", "/assets/sprites/meat1_spritesheet.png", {
+      frameWidth: 50,
+      frameHeight: 61
+    });
+    this.load.spritesheet("pig2", "/assets/sprites/pig2_spritesheet.png", {
+      frameWidth: 50,
+      frameHeight: 50
+    });
+    this.load.spritesheet("meat2", "/assets/sprites/meat2_spritesheet.png", {
+      frameWidth: 50,
+      frameHeight: 61
+    });
+    this.load.spritesheet("pig3", "/assets/sprites/pig3_spritesheet.png", {
+      frameWidth: 50,
+      frameHeight: 50
+    });
+    this.load.spritesheet("meat3", "/assets/sprites/meat3_spritesheet.png", {
+      frameWidth: 50,
+      frameHeight: 61
+    });
   }
 
   public create() {
@@ -150,6 +174,60 @@ export class LoadingScene extends Phaser.Scene {
       }),
       frameRate: 6,
       repeat: 2
+    });
+
+    this.anims.create({
+      key: "pig1",
+      frames: this.anims.generateFrameNumbers("pig1", {
+        frames: [0, 1, 1, 0, 1]
+      }),
+      frameRate: 6,
+      repeat: -1
+    });
+
+    this.anims.create({
+      key: "meat1",
+      frames: this.anims.generateFrameNumbers("meat1", {
+        frames: [0, 1, 1, 0, 1]
+      }),
+      frameRate: 6,
+      repeat: -1
+    });
+
+    this.anims.create({
+      key: "pig2",
+      frames: this.anims.generateFrameNumbers("pig2", {
+        frames: [0, 0, 1, 1, 1]
+      }),
+      frameRate: 6,
+      repeat: -1
+    });
+
+    this.anims.create({
+      key: "meat2",
+      frames: this.anims.generateFrameNumbers("meat2", {
+        frames: [0, 0, 1, 1, 1]
+      }),
+      frameRate: 6,
+      repeat: -1
+    });
+
+    this.anims.create({
+      key: "pig3",
+      frames: this.anims.generateFrameNumbers("pig3", {
+        frames: [1, 1, 0, 0, 1]
+      }),
+      frameRate: 6,
+      repeat: -1
+    });
+
+    this.anims.create({
+      key: "meat3",
+      frames: this.anims.generateFrameNumbers("meat3", {
+        frames: [1, 1, 0, 0, 1]
+      }),
+      frameRate: 6,
+      repeat: -1
     });
 
     this.scene.start("play");
