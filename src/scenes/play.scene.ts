@@ -336,7 +336,9 @@ export class PlayScene extends Phaser.Scene {
       this.player.play("idle");
     }
     if (this.player.isOutsideCamera(this.cameras.main)) {
-      this.player.respawn();
+      if (!this.player.respawn()) {
+        this.scene.start("game_over");
+      }
     }
 
     this.player.enableGravity();
