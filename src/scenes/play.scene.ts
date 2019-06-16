@@ -10,7 +10,7 @@ const INITIAL_Y = 1240;
 const LINE_HEIGHT = 175;
 const WORD_SPACE = 50;
 
-class TestScene extends Phaser.Scene {
+export class PlayScene extends Phaser.Scene {
   public platforms: Phaser.Physics.Arcade.StaticGroup;
   public respawnPlatforms: Phaser.Physics.Arcade.StaticGroup;
   public pickUpPlatforms: Phaser.Physics.Arcade.StaticGroup;
@@ -24,96 +24,15 @@ class TestScene extends Phaser.Scene {
   private pickUpWord: any = null;
   private inventory: string[] = [];
   private HUD = [];
+  private playerLifes: Phaser.GameObjects.Image[];
 
   constructor() {
     super({
-      key: "TestScene"
+      key: "play"
     });
-  }
-
-  public preload() {
-    this.load.spritesheet([
-      {
-        key: "player_idle",
-        url: "/assets/sprites/wolf_spritesheet.png",
-        frameConfig: {
-          frameWidth: 50,
-          frameHeight: 69,
-          startFrame: 0,
-          endFrame: 2
-        }
-      },
-      {
-        key: "player_jumping",
-        url: "/assets/sprites/wolf_spritesheet.png",
-        frameConfig: {
-          frameWidth: 50,
-          frameHeight: 87,
-          startFrame: 3,
-          endFrame: 4
-        }
-      },
-      {
-        key: "player_walking",
-        url: "/assets/sprites/wolf_spritesheet.png",
-        frameConfig: {
-          frameWidth: 50,
-          frameHeight: 69,
-          startFrame: 5,
-          endFrame: 6
-        }
-      }
-    ]);
-    this.load.spritesheet("fire", "/assets/sprites/fire_spritesheet.png", {
-      frameWidth: 50,
-      frameHeight: 60
-    });
-    this.load.image("floor", `/assets/px.png`);
-    this.load.image("pageLimit", `/assets/pagelimit.png`);
-    this.load.image("background", "/assets/background.jpg");
-    this.load.image("paragraphSeparator", `/assets/paragraph-separator.png`);
-    this.load.image("ladder", `/assets/ladder.png`);
-    this.load.audio("jump", "/assets/audio/jump.wav");
-    this.load.audio("background_music", "/assets/audio/background_music.mp3");
   }
 
   public create() {
-    this.anims.create({
-      key: "fire",
-      frames: this.anims.generateFrameNumbers("fire", {
-        frames: [0, 1]
-      }),
-      frameRate: 4,
-      repeat: -1
-    });
-
-    this.anims.create({
-      key: "idle",
-      frames: this.anims.generateFrameNumbers("player_idle", {
-        frames: [0, 1, 0, 1, 2, 1, 0, 1]
-      }),
-      frameRate: 5,
-      repeat: -1
-    });
-
-    this.anims.create({
-      key: "jump",
-      frames: this.anims.generateFrameNumbers("player_jumping", {
-        frames: [3, 4]
-      }),
-      frameRate: 5,
-      repeat: -1
-    });
-
-    this.anims.create({
-      key: "walk",
-      frames: this.anims.generateFrameNumbers("player_walking", {
-        frames: [5, 6]
-      }),
-      frameRate: 6,
-      repeat: -1
-    });
-
     const background = this.add.image(0, 0, "background");
     background.setOrigin(0, 0);
     background.setScale(1.2);
@@ -146,7 +65,9 @@ class TestScene extends Phaser.Scene {
         let wordX = INITIAL_X;
 
         currentLine.forEach(word => {
-          if (word === "") return;
+          if (word === "") {
+            return;
+          }
           const isPickUpWord = pickUpWords.includes(word);
           const isInteractiveWord = word === "climbing";
 
@@ -317,6 +238,16 @@ class TestScene extends Phaser.Scene {
     });
 
     this.sound.play("background_music", { loop: true });
+
+    this.playerLifes = [];
+    for (let i = 0; i < this.player.lifes; i += 1) {
+      this.playerLifes.push(
+        this.add
+          .image(15 + i * 45, 15, "life")
+          .setOrigin(0, 0)
+          .setScrollFactor(0)
+      );
+    }
   }
 
   public update(time: number, delta: number) {
@@ -333,10 +264,14 @@ class TestScene extends Phaser.Scene {
       this.player.enableJump();
     }
     if (this.player.hasStopped()) {
-      this.player.play("idle");
+      this.player.play("idle", true);
     }
     if (this.player.isOutsideCamera(this.cameras.main)) {
-      this.player.respawn();
+      if (this.player.respawn()) {
+        this.playerLifes[this.player.lifes].setVisible(false);
+      } else {
+        this.scene.start("game_over");
+      }
     }
 
     this.player.enableGravity();
@@ -345,6 +280,7 @@ class TestScene extends Phaser.Scene {
   private enableClimbing() {
     if (!this.isClimbingEnabled) {
       this.player.disableMovement();
+      this.hideHUD();
       this.cameras.main.stopFollow();
       this.cameras.main.zoomTo(0.3, 1000, "Linear", false, (_, progress) => {
         if (progress === 1) {
@@ -364,6 +300,7 @@ class TestScene extends Phaser.Scene {
               (_, panProgress) => {
                 if (panProgress === 1) {
                   this.cameras.main.zoomTo(1);
+                  this.showHUD();
                   this.cameras.main.startFollow(this.player, false);
                   this.player.enableMovement();
                 }
@@ -444,7 +381,9 @@ class TestScene extends Phaser.Scene {
   }
 
   private displayInventory() {
-    if (this.HUD.length) return;
+    if (this.HUD.length) {
+      return;
+    }
 
     this.player.disableMovement();
 
@@ -489,6 +428,16 @@ class TestScene extends Phaser.Scene {
     this.HUD = [];
     this.player.enableMovement();
   }
-}
 
-export default TestScene;
+  private hideHUD(): void {
+    for (let i = 0; i < this.player.lifes; i += 1) {
+      this.playerLifes[i].setVisible(false);
+    }
+  }
+
+  private showHUD(): void {
+    for (let i = 0; i < this.player.lifes; i += 1) {
+      this.playerLifes[i].setVisible(true);
+    }
+  }
+}
