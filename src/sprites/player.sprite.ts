@@ -1,7 +1,7 @@
 const GRAVITY_FORCE = 2000;
 const MOVE_SPEED = 250;
 const JUMP_FORCE = 600;
-const JUMP_LIMIT = 2;
+const JUMP_LIMIT = 200;
 const COLLISION_WIDTH = 40;
 const COLLISION_HEIGHT = 69;
 
@@ -23,35 +23,35 @@ export class PlayerSprite extends Phaser.Physics.Arcade.Sprite {
     this.jumpForce = JUMP_FORCE;
     (this.body as Phaser.Physics.Arcade.Body).setSize(
       COLLISION_WIDTH,
-      COLLISION_HEIGHT,
+      COLLISION_HEIGHT
     );
     this.setRespawnPosition(x, y);
 
     this.scene.anims.create({
       key: "idle",
       frames: this.scene.anims.generateFrameNumbers("player_idle", {
-        frames: [0, 1, 0, 1, 2, 1, 0, 1],
+        frames: [0, 1, 0, 1, 2, 1, 0, 1]
       }),
       frameRate: 5,
-      repeat: -1,
+      repeat: -1
     });
 
     this.scene.anims.create({
       key: "jump",
       frames: this.scene.anims.generateFrameNumbers("player_jumping", {
-        frames: [3, 4],
+        frames: [3, 4]
       }),
       frameRate: 5,
-      repeat: -1,
+      repeat: -1
     });
 
     this.scene.anims.create({
       key: "walk",
       frames: this.scene.anims.generateFrameNumbers("player_walking", {
-        frames: [5, 6],
+        frames: [5, 6]
       }),
       frameRate: 6,
-      repeat: -1,
+      repeat: -1
     });
 
     this.play("idle");
@@ -98,7 +98,7 @@ export class PlayerSprite extends Phaser.Physics.Arcade.Sprite {
       x: cameraX,
       y: cameraY,
       width: cameraWidth,
-      height: cameraHeight,
+      height: cameraHeight
     } = camera.worldView;
 
     return (

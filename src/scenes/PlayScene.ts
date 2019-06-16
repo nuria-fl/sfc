@@ -64,7 +64,7 @@ class TestScene extends Phaser.Scene {
   public create() {
     const background = this.add.image(0, 0, "background");
     background.setOrigin(0, 0);
-    background.setScale(1.5);
+    background.setScale(1.2);
 
     this.platforms = this.physics.add.staticGroup();
     this.respawnPlatforms = this.physics.add.staticGroup();
@@ -72,10 +72,10 @@ class TestScene extends Phaser.Scene {
     let pageOffset = 0;
 
     pages.forEach((page) => {
-      let lineY = 1300;
+      let lineY = 1250;
       page.forEach((line) => {
         const currentLine = line.split(" ");
-        let wordX = 2050;
+        let wordX = 2000;
 
         currentLine.forEach((word) => {
           const currentWord = this.add.text(wordX + pageOffset, lineY, word, {
@@ -145,8 +145,8 @@ class TestScene extends Phaser.Scene {
     this.cameras.main.setBounds(
       0,
       0,
-      background.width * 1.5,
-      background.height * 1.5,
+      background.width * 1.2,
+      background.height * 1.2,
     );
     this.cameras.main.startFollow(this.player, false);
 
