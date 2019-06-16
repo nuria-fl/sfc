@@ -24,6 +24,7 @@ export class PlayScene extends Phaser.Scene {
   private pickUpWord: any = null;
   private inventory: string[] = [];
   private HUD = [];
+  private playerLifes: Phaser.GameObjects.Image[];
 
   constructor() {
     super({
@@ -73,6 +74,7 @@ export class PlayScene extends Phaser.Scene {
     this.load.image("background", "/assets/background.jpg");
     this.load.image("paragraphSeparator", `/assets/paragraph-separator.png`);
     this.load.image("ladder", `/assets/ladder.png`);
+    this.load.image("life", `/assets/sprites/wolf_life.png`);
     this.load.audio("jump", "/assets/audio/jump.wav");
     this.load.audio("background_music", "/assets/audio/background_music.mp3");
   }
@@ -146,7 +148,7 @@ export class PlayScene extends Phaser.Scene {
         let wordX = INITIAL_X;
 
         currentLine.forEach(word => {
-          if (word === "") return;
+          if (word === "") { return; }
           const isPickUpWord = pickUpWords.includes(word);
           const isInteractiveWord = word === "climbing";
 
@@ -317,6 +319,16 @@ export class PlayScene extends Phaser.Scene {
     });
 
     this.sound.play("background_music", { loop: true });
+
+    this.playerLifes = [];
+    for (let i = 0; i < this.player.lifes; i += 1) {
+      this.playerLifes.push(
+        this.add
+          .image(15 + i * 45, 15, "life")
+          .setOrigin(0, 0)
+          .setScrollFactor(0)
+      );
+    }
   }
 
   public update(time: number, delta: number) {
@@ -336,7 +348,9 @@ export class PlayScene extends Phaser.Scene {
       this.player.play("idle", true);
     }
     if (this.player.isOutsideCamera(this.cameras.main)) {
-      if (!this.player.respawn()) {
+      if (this.player.respawn()) {
+        this.playerLifes[this.player.lifes].setVisible(false);
+      } else {
         this.scene.start("game_over");
       }
     }
@@ -446,7 +460,7 @@ export class PlayScene extends Phaser.Scene {
   }
 
   private displayInventory() {
-    if (this.HUD.length) return;
+    if (this.HUD.length) { return; }
 
     this.player.disableMovement();
 

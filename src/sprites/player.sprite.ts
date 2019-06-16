@@ -6,13 +6,19 @@ const COLLISION_WIDTH = 40;
 const COLLISION_HEIGHT = 69;
 
 export class PlayerSprite extends Phaser.Physics.Arcade.Sprite {
+
+  get canJump() {
+    if (this.canMove) {
+      return this.jumpCount < JUMP_LIMIT;
+    }
+  }
+  public lifes = 3;
   private moveSpeed: number;
   private jumpForce: number;
   private respawnX: number;
   private respawnY: number;
   private jumpCount = 0;
   private canMove = true;
-  private lifes = 3;
 
   constructor(scene: Phaser.Scene, x: number, y: number) {
     super(scene, x, y, "player_idle");
@@ -29,12 +35,6 @@ export class PlayerSprite extends Phaser.Physics.Arcade.Sprite {
     );
     this.setRespawnPosition(x, y);
     this.play("idle");
-  }
-
-  get canJump() {
-    if (this.canMove) {
-      return this.jumpCount < JUMP_LIMIT;
-    }
   }
 
   public moveLeft(): void {
