@@ -13,6 +13,7 @@ const WORD_SPACE = 50;
 class TestScene extends Phaser.Scene {
   public platforms: Phaser.Physics.Arcade.StaticGroup;
   public respawnPlatforms: Phaser.Physics.Arcade.StaticGroup;
+  public pickUpPlatforms: Phaser.Physics.Arcade.StaticGroup;
   private climbingPlatforms: Phaser.Physics.Arcade.StaticGroup;
   private ladder: Phaser.Physics.Arcade.Image;
   private firePlatforms: Phaser.Physics.Arcade.StaticGroup;
@@ -20,6 +21,9 @@ class TestScene extends Phaser.Scene {
   private cursors: Phaser.Input.Keyboard.CursorKeys;
   private pageBorder: Phaser.Physics.Arcade.Image;
   private isClimbingEnabled = false;
+  private pickUpWord: any = null;
+  private inventory: string[] = [];
+  private HUD = [];
 
   constructor() {
     super({
@@ -117,6 +121,7 @@ class TestScene extends Phaser.Scene {
     this.platforms = this.physics.add.staticGroup();
     this.climbingPlatforms = this.physics.add.staticGroup();
     this.respawnPlatforms = this.physics.add.staticGroup();
+    this.pickUpPlatforms = this.physics.add.staticGroup();
     this.ladder = this.physics.add
       .staticImage(3500, 4800, "ladder")
       .setOrigin(0)
@@ -126,6 +131,14 @@ class TestScene extends Phaser.Scene {
 
     let pageOffset = 0;
 
+    const pickUpWords = ["water", "eat"];
+
+    const colors = {
+      regular: "#333",
+      interactive: "#FFA500",
+      pickUp: "#21a9dd"
+    };
+
     pages.forEach(page => {
       let lineY = INITIAL_Y;
       page.forEach(line => {
@@ -133,10 +146,28 @@ class TestScene extends Phaser.Scene {
         let wordX = INITIAL_X;
 
         currentLine.forEach(word => {
+          if (word === "") return;
+          const isPickUpWord = pickUpWords.includes(word);
+          const isInteractiveWord = word === "climbing";
+
+          const getWordColor = () => {
+            if (isPickUpWord) {
+              return colors.pickUp;
+            } else if (isInteractiveWord) {
+              return colors.interactive;
+            } else {
+              return colors.regular;
+            }
+          };
+
+          if (isPickUpWord) {
+            pickUpWords.splice(pickUpWords.findIndex(w => w === word), 1);
+          }
+
           const currentWord = this.add.text(wordX + pageOffset, lineY, word, {
             fontFamily: "Amatic SC",
             fontSize: 100,
-            color: "#333"
+            color: getWordColor()
           });
 
           const bounds = currentWord.getBounds();
@@ -183,6 +214,12 @@ class TestScene extends Phaser.Scene {
                 )
               );
             }
+          } else if (isPickUpWord) {
+            platform = this.buildPlatform(
+              this.pickUpPlatforms,
+              bounds,
+              currentWord
+            );
           } else {
             platform = this.buildPlatform(this.platforms, bounds, currentWord);
           }
@@ -197,6 +234,7 @@ class TestScene extends Phaser.Scene {
     this.platforms.toggleVisible();
     this.respawnPlatforms.toggleVisible();
     this.firePlatforms.toggleVisible();
+    this.pickUpPlatforms.toggleVisible();
 
     this.cursors = this.input.keyboard.createCursorKeys();
 
@@ -238,6 +276,9 @@ class TestScene extends Phaser.Scene {
     this.physics.add.collider(this.player, this.firePlatforms, () => {
       this.player.respawn();
     });
+    this.physics.add.collider(this.player, this.pickUpPlatforms, (_, word) => {
+      this.pickUpWord = word; // will reset on player move
+    });
 
     this.cameras.main.setBounds(
       0,
@@ -250,6 +291,28 @@ class TestScene extends Phaser.Scene {
     this.input.keyboard.on("keydown", ({ code }) => {
       if (code === "Space") {
         this.player.jump();
+        this.pickUpWord = null;
+      }
+
+      if (code === "KeyZ" && this.pickUpWord) {
+        this.inventory.push(
+          ((this.pickUpWord as any).word as Phaser.GameObjects.Text).text
+        );
+
+        this.pickUpWord.destroy();
+        ((this.pickUpWord as any).word as Phaser.GameObjects.Text).destroy();
+      }
+
+      if (
+        code === "KeyX" &&
+        this.player.body.velocity.x === 0 &&
+        this.player.body.velocity.y === 0
+      ) {
+        this.displayInventory();
+      }
+
+      if (code === "Escape") {
+        this.closeInventory();
       }
     });
 
@@ -258,8 +321,10 @@ class TestScene extends Phaser.Scene {
 
   public update(time: number, delta: number) {
     if (this.cursors.left.isDown) {
+      this.pickUpWord = null;
       this.player.moveLeft();
     } else if (this.cursors.right.isDown) {
+      this.pickUpWord = null;
       this.player.moveRight();
     } else {
       this.player.stop();
@@ -376,6 +441,53 @@ class TestScene extends Phaser.Scene {
     platform.word = word;
 
     return platform;
+  }
+
+  private displayInventory() {
+    if (this.HUD.length) return;
+
+    this.player.disableMovement();
+
+    this.HUD.push(
+      this.add
+        .graphics()
+        .fillRect(0, 0, 7200, 4800)
+        .fillStyle(0x000000)
+        .setAlpha(0.8)
+    );
+
+    this.HUD.push(
+      this.add
+        .text(
+          this.player.x - 390,
+          this.player.y - 290,
+          "Press 'ESC' to close inventory",
+          {
+            fontFamily: "Amatic SC",
+            fontSize: 30,
+            textAlign: "center",
+            color: "#fff"
+          }
+        )
+        .setFixedSize(800, 30)
+    );
+    let yPosition = this.player.y - LINE_HEIGHT;
+    this.inventory.forEach((word, i) => {
+      this.HUD.push(
+        this.add.text(this.player.x - this.player.width / 2, yPosition, word, {
+          fontFamily: "Amatic SC",
+          fontSize: 100,
+          color: "#fff"
+        })
+      );
+      yPosition += LINE_HEIGHT;
+    });
+  }
+
+  private closeInventory() {
+    this.HUD.forEach(item => item.destroy());
+    this.HUD = [];
+    this.player.enableMovement();
   }
 }
 
