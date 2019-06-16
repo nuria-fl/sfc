@@ -170,14 +170,12 @@ export class DialogService {
 }
 
 export const createDialogBox = (text: string, cb: any, scene: any) => {
-  // scene.playingCutscene = true;
   scene.dialog.init();
   scene.dialog.setText(text);
   const addListener = () => {
     scene.input.keyboard.once("keydown", () => {
       if (!scene.dialog.animating) {
         scene.dialog.toggleWindow();
-        scene.playingCutscene = false;
         if (cb) {
           cb();
         }

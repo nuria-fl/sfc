@@ -27,6 +27,10 @@ export class PlayScene extends Phaser.Scene {
   private inventory: string[] = [];
   private HUD = [];
   private playerLifes: Phaser.GameObjects.Image[];
+  public world = {
+    width: 0,
+    height: 0
+  };
 
   constructor() {
     super({
@@ -40,6 +44,9 @@ export class PlayScene extends Phaser.Scene {
     const background = this.add.image(0, 0, "background");
     background.setOrigin(0, 0);
     background.setScale(1.2);
+
+    this.world.width = background.width * 1.2;
+    this.world.height = background.height * 1.2;
 
     this.platforms = this.physics.add.staticGroup();
     this.climbingPlatforms = this.physics.add.staticGroup();
@@ -220,18 +227,13 @@ export class PlayScene extends Phaser.Scene {
       }
     );
     this.physics.add.collider(this.player, this.firePlatforms, () => {
-      this.player.respawn();
+      this.player.die(this);
     });
     this.physics.add.collider(this.player, this.pickUpPlatforms, (_, word) => {
       this.pickUpWord = word; // will reset on player move
     });
 
-    this.cameras.main.setBounds(
-      0,
-      0,
-      background.width * 1.2,
-      background.height * 1.2
-    );
+    this.cameras.main.setBounds(0, 0, this.world.width, this.world.height);
     this.cameras.main.startFollow(this.player, false);
 
     this.input.keyboard.on("keydown", ({ code }) => {
@@ -291,12 +293,8 @@ export class PlayScene extends Phaser.Scene {
     if (this.player.hasStopped()) {
       this.player.play("idle", true);
     }
-    if (this.player.isOutsideCamera(this.cameras.main)) {
-      if (this.player.respawn()) {
-        this.playerLifes[this.player.lifes].setVisible(false);
-      } else {
-        this.scene.start("game_over");
-      }
+    if (this.player.isOutsideWorld(this.world)) {
+      this.player.die(this);
     }
 
     this.player.enableGravity();

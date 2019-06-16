@@ -6,13 +6,13 @@ const COLLISION_WIDTH = 40;
 const COLLISION_HEIGHT = 69;
 
 export class PlayerSprite extends Phaser.Physics.Arcade.Sprite {
-
   get canJump() {
     if (this.canMove) {
       return this.jumpCount < JUMP_LIMIT;
     }
   }
   public lifes = 3;
+  public dead = false;
   private moveSpeed: number;
   private jumpForce: number;
   private respawnX: number;
@@ -74,19 +74,9 @@ export class PlayerSprite extends Phaser.Physics.Arcade.Sprite {
     this.jumpCount = 0;
   }
 
-  public isOutsideCamera(camera: Phaser.Cameras.Scene2D.Camera): boolean {
-    const {
-      x: cameraX,
-      y: cameraY,
-      width: cameraWidth,
-      height: cameraHeight
-    } = camera.worldView;
-
+  public isOutsideWorld(world: { width: number; height: number }): boolean {
     return (
-      this.x < cameraX ||
-      this.x > cameraX + cameraWidth ||
-      this.y < cameraY ||
-      this.y > cameraY + cameraHeight
+      this.x < 0 || this.x > world.width || this.y < 0 || this.y > world.height
     );
   }
 
@@ -104,11 +94,15 @@ export class PlayerSprite extends Phaser.Physics.Arcade.Sprite {
     this.setVelocity(0, 0);
     this.x = this.respawnX;
     this.y = this.respawnY;
+    this.enableMovement();
+    this.dead = false;
     return true;
   }
 
   public hasStopped(): boolean {
-    return this.body.velocity.x === 0 && this.body.velocity.y === 0;
+    return (
+      !this.dead && this.body.velocity.x === 0 && this.body.velocity.y === 0
+    );
   }
 
   public disableMovement() {
@@ -126,5 +120,21 @@ export class PlayerSprite extends Phaser.Physics.Arcade.Sprite {
 
   public disableGravity() {
     this.setGravityY(0);
+  }
+
+  public die(scene) {
+    if (!this.dead) {
+      this.dead = true;
+      this.play("die", true);
+      this.setVelocityY(-500);
+      this.disableMovement();
+      setTimeout(() => {
+        if (this.respawn()) {
+          scene.playerLifes[this.lifes].setVisible(false);
+        } else {
+          scene.scene.start("game_over");
+        }
+      }, 1500);
+    }
   }
 }
