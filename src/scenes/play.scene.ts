@@ -30,6 +30,7 @@ export class PlayScene extends Phaser.Scene {
     width: 0,
     height: 0
   };
+  private music: Phaser.Sound.BaseSound;
   private climbingPlatforms: Phaser.Physics.Arcade.StaticGroup;
   private ladder: Phaser.Physics.Arcade.Image;
   private firePlatforms: Phaser.Physics.Arcade.StaticGroup;
@@ -309,7 +310,12 @@ export class PlayScene extends Phaser.Scene {
       }
     });
 
-    this.sound.play("background_music", { loop: true, volume: 0.3 });
+    this.music = this.sound.add("background_music", {
+      loop: true,
+      volume: 0.3
+    });
+
+    this.music.play();
 
     this.playerLifes = [];
     for (let i = 0; i < this.player.lifes; i += 1) {
@@ -434,6 +440,9 @@ export class PlayScene extends Phaser.Scene {
   private buildLadder() {
     this.ladder.setVisible(true);
     const scene = this;
+    const rumbleSound = this.sound.add("rumble");
+    rumbleSound.play();
+
     this.tweens.add({
       targets: this.ladder,
       y: INITIAL_Y,
@@ -442,6 +451,7 @@ export class PlayScene extends Phaser.Scene {
       repeat: 0,
       onComplete() {
         scene.ladder.refreshBody();
+        rumbleSound.stop();
       }
     });
 
@@ -643,7 +653,18 @@ export class PlayScene extends Phaser.Scene {
     const pig3Active = this.pig3.active;
 
     if (!pig1Active && !pig2Active && !pig3Active) {
-      this.scene.start("thanks");
+      this.player.jump();
+      this.player.disableMovement();
+      this.music.stop();
+      this.sound.play("fanfare");
+      setTimeout(() => {
+        this.scene.start("thanks");
+      }, 1500);
     }
+  }
+
+  public goToGameOver() {
+    this.music.stop();
+    this.scene.start("game_over");
   }
 }

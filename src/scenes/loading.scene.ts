@@ -84,7 +84,11 @@ export class LoadingScene extends Phaser.Scene {
     this.load.image("ladder", `/assets/ladder.png`);
     this.load.image("life", `/assets/sprites/wolf_life.png`);
     this.load.audio("jump", "/assets/audio/jump.wav");
+    this.load.audio("rumble", "/assets/audio/rumble.mp3");
+    this.load.audio("lose_life", "/assets/audio/lose_life.mp3");
+    this.load.audio("fanfare", "/assets/audio/fanfare.mp3");
     this.load.audio("background_music", "/assets/audio/background_music.mp3");
+    this.load.audio("finale_music", "/assets/audio/finale.ogg");
     this.load.image("game_over_background", "/assets/game_over_background.jpg");
     this.load.spritesheet("pig1", "/assets/sprites/pig1_spritesheet.png", {
       frameWidth: 50,

@@ -126,13 +126,14 @@ export class PlayerSprite extends Phaser.Physics.Arcade.Sprite {
     if (!this.dead) {
       this.dead = true;
       this.play("die", true);
+      scene.sound.play("lose_life");
       this.setVelocityY(-500);
       this.disableMovement();
       setTimeout(() => {
         if (this.respawn()) {
           scene.playerLifes[this.lifes].setVisible(false);
         } else {
-          scene.scene.start("game_over");
+          scene.goToGameOver();
         }
       }, 1500);
     }
