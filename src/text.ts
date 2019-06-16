@@ -16,8 +16,7 @@ export default [
   ],
   [
     "roof the little pig prepared a big pot full of",
-    "water to boil and made up a blazing",
-    "fire.🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥",
+    "water to boil and made up a blazing fire.",
     "",
     "Then, just as the wolf was coming down the",
     "chimney, the little piggy pulled off the lid,",
