@@ -1,4 +1,5 @@
 import { FireSprite } from "../sprites/fire.sprite";
+import { PigSprite } from "../sprites/pig.sprite";
 import { PlayerSprite } from "../sprites/player.sprite";
 import { WaterCloudSprite } from "../sprites/water_cloud.sprite";
 import pages from "../text";
@@ -6,7 +7,7 @@ import { createDialogBox, DialogService } from "../utils/dialog";
 
 const PLAYER_INITIAL_X = 5033;
 // const PLAYER_INITIAL_X = 2050;
-const PLAYER_INITIAL_Y = 1400;
+const PLAYER_INITIAL_Y = 2800;
 // const PLAYER_INITIAL_Y = 600;
 const PAGE_OFFSET = 1900;
 const INITIAL_X = 1985;
@@ -14,6 +15,12 @@ const INITIAL_Y = 1240;
 const LINE_HEIGHT = 175;
 const WORD_SPACE = 50;
 const INVENTORY_HUD_OFFSET = 2;
+const PIG_1_POSITION_X = 4924;
+const PIG_1_POSITION_Y = 2800;
+const PIG_2_POSITION_X = 5087;
+const PIG_2_POSITION_Y = 2800;
+const PIG_3_POSITION_X = 5290;
+const PIG_3_POSITION_Y = 2800;
 
 export class PlayScene extends Phaser.Scene {
   public platforms: Phaser.Physics.Arcade.StaticGroup;
@@ -37,6 +44,9 @@ export class PlayScene extends Phaser.Scene {
   private inventoryWordSelected: number | null = null;
   private HUD = [];
   private playerLifes: Phaser.GameObjects.Image[];
+  private pig1: PigSprite;
+  private pig2: PigSprite;
+  private pig3: PigSprite;
 
   constructor() {
     super({
@@ -183,8 +193,11 @@ export class PlayScene extends Phaser.Scene {
       .setVisible(false)
       .refreshBody();
 
-    this.player = new PlayerSprite(this, PLAYER_INITIAL_X, PLAYER_INITIAL_Y);
+    this.pig1 = new PigSprite(this, PIG_1_POSITION_X, PIG_1_POSITION_Y, "pig1");
+    this.pig2 = new PigSprite(this, PIG_2_POSITION_X, PIG_2_POSITION_Y, "pig2");
+    this.pig3 = new PigSprite(this, PIG_3_POSITION_X, PIG_3_POSITION_Y, "pig3");
 
+    this.player = new PlayerSprite(this, PLAYER_INITIAL_X, PLAYER_INITIAL_Y);
     this.player.disableMovement();
 
     setTimeout(() => {
@@ -219,6 +232,27 @@ export class PlayScene extends Phaser.Scene {
       }
     );
     this.physics.add.collider(this.player, this.platforms);
+    this.physics.add.collider(this.pig1, this.platforms);
+    this.physics.add.overlap(this.player, this.pig2, () => {
+      if (this.pig2.canBeEaten()) {
+        this.pig2.destroy(true);
+        this.checkWinningCondition();
+      }
+    });
+    this.physics.add.collider(this.pig2, this.platforms);
+    this.physics.add.overlap(this.player, this.pig1, () => {
+      if (this.pig1.canBeEaten()) {
+        this.pig1.destroy(true);
+        this.checkWinningCondition();
+      }
+    });
+    this.physics.add.collider(this.pig3, this.platforms);
+    this.physics.add.overlap(this.player, this.pig3, () => {
+      if (this.pig3.canBeEaten()) {
+        this.pig3.destroy(true);
+        this.checkWinningCondition();
+      }
+    });
     this.physics.add.collider(this.player, this.pageBorder);
     this.physics.add.collider(
       this.player,
@@ -309,7 +343,6 @@ export class PlayScene extends Phaser.Scene {
     if (this.player.isOutsideWorld(this.world)) {
       this.player.die(this);
     }
-
     this.player.enableGravity();
 
     if (this.inventoryOpened) {
@@ -517,7 +550,7 @@ export class PlayScene extends Phaser.Scene {
   }
 
   private playerUseWord(word: Phaser.GameObjects.Text): void {
-    if (word.text === "water") {
+    if (word.text === "water" && this.firePlatforms.children.entries[0]) {
       const mainFirePlatform = this.firePlatforms.children.entries[0];
       const { x: playerX, y: playerY } = this.player;
       const {
@@ -551,9 +584,68 @@ export class PlayScene extends Phaser.Scene {
           mainFirePlatform.destroy(true);
           waterCloud.destroy();
         });
-      } else {
-        // console.log("it's too far!");
       }
+    } else if (word.text === "eat") {
+      const { x: playerX, y: playerY } = this.player;
+      const { x: pig1X, y: pig1Y, active: pig1Active } = this.pig1;
+      const { x: pig2X, y: pig2Y, active: pig2Active } = this.pig2;
+      const { x: pig3X, y: pig3Y, active: pig3Active } = this.pig3;
+      const distancePig1 = Phaser.Math.Distance.Between(
+        playerX,
+        playerY,
+        pig1X,
+        pig1Y
+      );
+      const distancePig2 = Phaser.Math.Distance.Between(
+        playerX,
+        playerY,
+        pig2X,
+        pig2Y
+      );
+      const distancePig3 = Phaser.Math.Distance.Between(
+        playerX,
+        playerY,
+        pig3X,
+        pig3Y
+      );
+
+      let minimum = null;
+      let pigToBeEaten = null;
+
+      if (pig1Active) {
+        minimum = distancePig1;
+        pigToBeEaten = this.pig1;
+        if (distancePig2 < minimum && pig2Active) {
+          minimum = distancePig2;
+          pigToBeEaten = this.pig2;
+        }
+        if (distancePig3 < minimum && pig3Active) {
+          minimum = distancePig3;
+          pigToBeEaten = this.pig3;
+        }
+      } else if (pig2Active) {
+        minimum = distancePig2;
+        pigToBeEaten = this.pig2;
+        if (distancePig3 < minimum && pig3Active) {
+          minimum = distancePig3;
+        }
+      } else if (pig3Active) {
+        pigToBeEaten = this.pig3;
+      }
+
+      if (pigToBeEaten && minimum < 200) {
+        pigToBeEaten.setVulnerable();
+      }
+    }
+  }
+
+  private checkWinningCondition() {
+    const pig1Active = this.pig1.active;
+    const pig2Active = this.pig2.active;
+    const pig3Active = this.pig3.active;
+
+    if (!pig1Active && !pig2Active && !pig3Active) {
+      this.scene.start("thanks");
     }
   }
 }

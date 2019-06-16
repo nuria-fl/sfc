@@ -1,4 +1,4 @@
-const GRAVITY_FORCE = 2000;
+export const GRAVITY_FORCE = 2000;
 const MOVE_SPEED = 250;
 const JUMP_FORCE = 650;
 const JUMP_LIMIT = 200;
