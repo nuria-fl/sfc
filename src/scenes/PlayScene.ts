@@ -67,8 +67,13 @@ class TestScene extends Phaser.Scene {
     this.load.image("floor", `/assets/px.png`);
     this.load.image("pageLimit", `/assets/pagelimit.png`);
     this.load.image("background", "/assets/background.jpg");
+<<<<<<< HEAD
     this.load.image("paragraphSeparator", `/assets/paragraph-separator.png`);
     this.load.image("ladder", `/assets/ladder.png`);
+=======
+    this.load.audio("jump", "/assets/audio/jump.wav");
+    this.load.audio("background_music", "/assets/audio/background_music.mp3");
+>>>>>>> 3588bb5... feat: add background music and jump sound
   }
 
   public create() {
@@ -250,6 +255,11 @@ class TestScene extends Phaser.Scene {
         this.player.jump();
       }
     });
+
+    this.sound.play("background_music", { loop: true });
+
+    // TODO: remove this later
+    this.sound.pauseAll();
   }
 
   public update(time: number, delta: number) {
