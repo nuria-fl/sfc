@@ -5,10 +5,6 @@ export class GameOverScene extends Phaser.Scene {
     });
   }
 
-  public preload() {
-    this.load.image("game_over_background", "/assets/game_over_background.jpg");
-  }
-
   public create() {
     this.add
       .image(0, 0, "game_over_background")

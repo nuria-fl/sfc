@@ -5,10 +5,6 @@ export class StartScene extends Phaser.Scene {
     });
   }
 
-  public preload() {
-    this.load.image("start_background", "/assets/start_background.jpg");
-  }
-
   public create() {
     const background = this.add.image(0, 0, "start_background");
     background.setOrigin(0);
