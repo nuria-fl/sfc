@@ -5,10 +5,8 @@ import { WaterCloudSprite } from "../sprites/water_cloud.sprite";
 import pages from "../text";
 import { createDialogBox, DialogService } from "../utils/dialog";
 
-const PLAYER_INITIAL_X = 5033;
-// const PLAYER_INITIAL_X = 2050;
-const PLAYER_INITIAL_Y = 2800;
-// const PLAYER_INITIAL_Y = 600;
+const PLAYER_INITIAL_X = 2187;
+const PLAYER_INITIAL_Y = 1225;
 const PAGE_OFFSET = 1900;
 const INITIAL_X = 1985;
 const INITIAL_Y = 1240;
@@ -39,7 +37,7 @@ export class PlayScene extends Phaser.Scene {
   private pageBorder: Phaser.Physics.Arcade.Image;
   private isClimbingEnabled = false;
   private pickUpWord: any = null;
-  private inventory: string[] = ["water", "eat"];
+  private inventory: string[] = [];
   private inventoryOpened = false;
   private inventoryWordSelected: number | null = null;
   private HUD = [];
@@ -262,7 +260,7 @@ export class PlayScene extends Phaser.Scene {
         const { x } = wolfPlatform.getCenter();
         this.player.setRespawnPosition(x, top - this.player.height / 2);
         ((wolfPlatform as any).word as Phaser.GameObjects.Text).setColor(
-          "#f00"
+          "#616161"
         );
       }
     );
@@ -311,7 +309,7 @@ export class PlayScene extends Phaser.Scene {
       }
     });
 
-    this.sound.play("background_music", { loop: true });
+    this.sound.play("background_music", { loop: true, volume: 0.3 });
 
     this.playerLifes = [];
     for (let i = 0; i < this.player.lifes; i += 1) {
