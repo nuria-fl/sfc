@@ -594,6 +594,7 @@ export class PlayScene extends Phaser.Scene {
           (mainFirePlatform as any).word.setVisible(false);
           mainFirePlatform.destroy(true);
           waterCloud.destroy();
+          this.pageBorder.destroy();
         });
       } else {
         this.player.disableMovement();
