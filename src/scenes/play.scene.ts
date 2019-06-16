@@ -434,6 +434,9 @@ export class PlayScene extends Phaser.Scene {
   private buildLadder() {
     this.ladder.setVisible(true);
     const scene = this;
+    const rumbleSound = this.sound.add("rumble");
+    rumbleSound.play();
+
     this.tweens.add({
       targets: this.ladder,
       y: INITIAL_Y,
@@ -442,6 +445,7 @@ export class PlayScene extends Phaser.Scene {
       repeat: 0,
       onComplete() {
         scene.ladder.refreshBody();
+        rumbleSound.stop();
       }
     });
 
