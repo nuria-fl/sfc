@@ -10,7 +10,7 @@ const INITIAL_Y = 1240;
 const LINE_HEIGHT = 175;
 const WORD_SPACE = 50;
 
-class TestScene extends Phaser.Scene {
+export class PlayScene extends Phaser.Scene {
   public platforms: Phaser.Physics.Arcade.StaticGroup;
   public respawnPlatforms: Phaser.Physics.Arcade.StaticGroup;
   public pickUpPlatforms: Phaser.Physics.Arcade.StaticGroup;
@@ -27,7 +27,7 @@ class TestScene extends Phaser.Scene {
 
   constructor() {
     super({
-      key: "TestScene"
+      key: "play"
     });
   }
 
@@ -490,5 +490,3 @@ class TestScene extends Phaser.Scene {
     this.player.enableMovement();
   }
 }
-
-export default TestScene;
