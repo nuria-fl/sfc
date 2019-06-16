@@ -7,7 +7,7 @@ export class WaterCloudSprite extends Phaser.Physics.Arcade.Sprite {
     this.scene.physics.world.enable(this);
     this.scene.add.existing(this);
 
-    this.rain = this.scene.add.sprite(x, y + this.height, "rain");
+    this.rain = this.scene.add.sprite(x, y + this.height - 10, "rain");
 
     this.rain.play("rain");
   }
