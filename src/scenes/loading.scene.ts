@@ -72,6 +72,11 @@ export class LoadingScene extends Phaser.Scene {
       frameWidth: 50,
       frameHeight: 60
     });
+    this.load.image("water_cloud", "/assets/sprites/water_cloud.png");
+    this.load.spritesheet("rain", "/assets/sprites/rain_spritesheet.png", {
+      frameWidth: 200,
+      frameHeight: 170
+    });
     this.load.image("floor", `/assets/px.png`);
     this.load.image("pageLimit", `/assets/pagelimit.png`);
     this.load.image("background", "/assets/background.jpg");
@@ -136,6 +141,15 @@ export class LoadingScene extends Phaser.Scene {
       }),
       frameRate: 6,
       repeat: -1
+    });
+
+    this.anims.create({
+      key: "rain",
+      frames: this.anims.generateFrameNumbers("rain", {
+        frames: [0, 1, 1, 0, 1]
+      }),
+      frameRate: 6,
+      repeat: 2
     });
 
     this.scene.start("play");

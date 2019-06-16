@@ -1,11 +1,13 @@
 import { FireSprite } from "../sprites/fire.sprite";
 import { PlayerSprite } from "../sprites/player.sprite";
+import { WaterCloudSprite } from "../sprites/water_cloud.sprite";
 import pages from "../text";
 import { createDialogBox, DialogService } from "../utils/dialog";
 
-const PLAYER_INITIAL_X = 4500;
+const PLAYER_INITIAL_X = 5033;
 // const PLAYER_INITIAL_X = 2050;
-const PLAYER_INITIAL_Y = 600;
+const PLAYER_INITIAL_Y = 1400;
+// const PLAYER_INITIAL_Y = 600;
 const PAGE_OFFSET = 1900;
 const INITIAL_X = 1985;
 const INITIAL_Y = 1240;
@@ -532,16 +534,25 @@ export class PlayScene extends Phaser.Scene {
       if (distance < 200) {
         const bigPlatform = (mainFirePlatform as any).bigPlatform;
         const bigPlatformFires = bigPlatform.fires;
-        (mainFirePlatform as any).fire.destroy(true);
-        // tslint:disable-next-line:prefer-for-of
-        for (let i = 0; i < bigPlatformFires.length; i += 1) {
-          bigPlatformFires[i].destroy(true);
-        }
-        bigPlatform.destroy(true);
-        (mainFirePlatform as any).word.setVisible(false);
-        mainFirePlatform.destroy(true);
+
+        const waterCloud = new WaterCloudSprite(
+          this,
+          (mainFirePlatform.body as Phaser.Physics.Arcade.Body).center.x,
+          (mainFirePlatform.body as Phaser.Physics.Arcade.Body).center.y - 200
+        );
+        waterCloud.onRainEnded(() => {
+          (mainFirePlatform as any).fire.destroy(true);
+          // tslint:disable-next-line:prefer-for-of
+          for (let i = 0; i < bigPlatformFires.length; i += 1) {
+            bigPlatformFires[i].destroy(true);
+          }
+          bigPlatform.destroy(true);
+          (mainFirePlatform as any).word.setVisible(false);
+          mainFirePlatform.destroy(true);
+          waterCloud.destroy();
+        });
       } else {
-        console.log("it's too far!");
+        // console.log("it's too far!");
       }
     }
   }
