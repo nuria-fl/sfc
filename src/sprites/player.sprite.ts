@@ -19,7 +19,7 @@ export class PlayerSprite extends Phaser.Physics.Arcade.Sprite {
     this.scene.physics.world.enable(this);
     this.scene.add.existing(this);
 
-    this.setGravity(0, GRAVITY_FORCE);
+    this.enableGravity();
     this.moveSpeed = MOVE_SPEED;
     this.jumpForce = JUMP_FORCE;
     (this.body as Phaser.Physics.Arcade.Body).setSize(
@@ -139,5 +139,13 @@ export class PlayerSprite extends Phaser.Physics.Arcade.Sprite {
 
   public enableMovement() {
     this.canMove = true;
+  }
+
+  public enableGravity() {
+    this.setGravityY(GRAVITY_FORCE);
+  }
+
+  public disableGravity() {
+    this.setGravityY(0);
   }
 }

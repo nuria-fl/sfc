@@ -14,7 +14,7 @@ class TestScene extends Phaser.Scene {
   public platforms: Phaser.Physics.Arcade.StaticGroup;
   public respawnPlatforms: Phaser.Physics.Arcade.StaticGroup;
   private climbingPlatforms: Phaser.Physics.Arcade.StaticGroup;
-  private ladder: any;
+  private ladder: Phaser.Physics.Arcade.Image;
   private player: PlayerSprite;
   private fire: FireSprite;
   private cursors: Phaser.Input.Keyboard.CursorKeys;
@@ -68,6 +68,7 @@ class TestScene extends Phaser.Scene {
     this.load.image("pageLimit", `/assets/pagelimit.png`);
     this.load.image("background", "/assets/background.jpg");
     this.load.image("paragraphSeparator", `/assets/paragraph-separator.png`);
+    this.load.image("ladder", `/assets/ladder.png`);
   }
 
   public create() {
@@ -78,6 +79,11 @@ class TestScene extends Phaser.Scene {
     this.platforms = this.physics.add.staticGroup();
     this.climbingPlatforms = this.physics.add.staticGroup();
     this.respawnPlatforms = this.physics.add.staticGroup();
+    this.ladder = this.physics.add
+      .staticImage(3500, 4800, "ladder")
+      .setOrigin(0)
+      .setVisible(false)
+      .refreshBody();
 
     let pageOffset = 0;
 
@@ -130,10 +136,12 @@ class TestScene extends Phaser.Scene {
 
     this.cursors = this.input.keyboard.createCursorKeys();
 
-    // this.pageBorder = this.physics.add
-    //   .staticImage(1650, 10, "pageLimit")
-    //   .setScale(1, 2)
-    //   .refreshBody();
+    this.pageBorder = this.physics.add
+      .staticImage(3850, INITIAL_Y, "pageLimit")
+      .setOrigin(0)
+      .setScale(1, 3)
+      .setVisible(false)
+      .refreshBody();
 
     this.player = new PlayerSprite(this, PLAYER_INITIAL_X, PLAYER_INITIAL_Y);
 
@@ -193,17 +201,20 @@ class TestScene extends Phaser.Scene {
     if (this.player.isOutsideCamera(this.cameras.main)) {
       this.player.respawn();
     }
+
+    this.player.enableGravity();
   }
 
   private enableClimbing() {
     if (!this.isClimbingEnabled) {
       this.player.disableMovement();
       this.cameras.main.stopFollow();
-      this.cameras.main.zoomTo(0.35, 1000, "Linear", false, (_, progress) => {
+      this.cameras.main.zoomTo(0.3, 1000, "Linear", false, (_, progress) => {
         if (progress === 1) {
-          this.cameras.main.pan(3000, 1200);
+          this.cameras.main.pan(3200, 2400);
           const BUILDING_TIME = 2000;
           this.buildClimbingPlatforms();
+          this.buildLadder();
           this.cameras.main.shake(BUILDING_TIME - 200);
           setTimeout(() => {
             this.cameras.main.pan(
@@ -229,10 +240,9 @@ class TestScene extends Phaser.Scene {
 
   private buildClimbingPlatforms() {
     const platforms = [
-      { x: 750, y: 1050 },
-      { x: 750, y: 1800 },
-      { x: 750 + PAGE_OFFSET, y: 600 },
-      { x: 750 + PAGE_OFFSET, y: 1300 }
+      { x: 2710, y: 2335 },
+      { x: 2710, y: 3215 },
+      { x: 2710 + PAGE_OFFSET, y: 1635 }
     ];
 
     platforms.forEach(platform => {
@@ -250,7 +260,31 @@ class TestScene extends Phaser.Scene {
     this.physics.add.collider(this.player, this.climbingPlatforms);
   }
 
-  private buildLadder() {}
+  private buildLadder() {
+    this.ladder.setVisible(true);
+    const scene = this;
+    this.tweens.add({
+      targets: this.ladder,
+      y: INITIAL_Y,
+      ease: "Power1",
+      duration: 2000,
+      repeat: 0,
+      onComplete() {
+        scene.ladder.refreshBody();
+      }
+    });
+
+    this.ladder.body.checkCollision.down = false;
+    this.ladder.body.checkCollision.left = false;
+    this.ladder.body.checkCollision.right = false;
+    this.physics.add.collider(this.player, this.ladder);
+
+    this.physics.add.overlap(this.player, this.ladder, () => {
+      this.player.disableGravity();
+      this.player.setVelocityX(0);
+      this.player.setVelocityY(-400);
+    });
+  }
 }
 
 export default TestScene;
