@@ -333,7 +333,7 @@ export class PlayScene extends Phaser.Scene {
       this.player.enableJump();
     }
     if (this.player.hasStopped()) {
-      this.player.play("idle");
+      this.player.play("idle", true);
     }
     if (this.player.isOutsideCamera(this.cameras.main)) {
       if (!this.player.respawn()) {
